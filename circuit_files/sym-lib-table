@@ -1,0 +1,4 @@
+(sym_lib_table
+  (lib (name PIC)(type Legacy)(uri "Z:/users/David/David Kicad libs/PIC.lib")(options "")(descr ""))
+  (lib (name Kallebol_elevation-rescue)(type Legacy)(uri ${KIPRJMOD}/Kallebol_elevation-rescue.lib)(options "")(descr ""))
+)
