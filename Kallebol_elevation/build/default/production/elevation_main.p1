@@ -13,6 +13,12 @@ Version 4.0 HI-TECH Software Intermediate Code
 "341
 [; ;/opt/microchip/xc8/v2.36/pic/include/proc/pic16f874.h: 341: extern volatile unsigned char PORTD __attribute__((address(0x008)));
 [v _PORTD `Vuc ~T0 @X0 0 e@8 ]
+"1055
+[; ;/opt/microchip/xc8/v2.36/pic/include/proc/pic16f874.h: 1055: extern volatile unsigned char TXREG __attribute__((address(0x019)));
+[v _TXREG `Vuc ~T0 @X0 0 e@25 ]
+"2814
+[; ;/opt/microchip/xc8/v2.36/pic/include/proc/pic16f874.h: 2814: extern volatile __bit TRMT __attribute__((address(0x4C1)));
+[v _TRMT `Vb ~T0 @X0 0 e@1217 ]
 "409
 [; ;/opt/microchip/xc8/v2.36/pic/include/proc/pic16f874.h: 409:     struct {
 [s S14 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
@@ -24,14 +30,14 @@ Version 4.0 HI-TECH Software Intermediate Code
 "415
 [; ;/opt/microchip/xc8/v2.36/pic/include/proc/pic16f874.h: 415: extern volatile PORTEbits_t PORTEbits __attribute__((address(0x009)));
 [v _PORTEbits `VS13 ~T0 @X0 0 e@9 ]
+"1062
+[; ;/opt/microchip/xc8/v2.36/pic/include/proc/pic16f874.h: 1062: extern volatile unsigned char RCREG __attribute__((address(0x01A)));
+[v _RCREG `Vuc ~T0 @X0 0 e@26 ]
 [t ~ __interrupt . k ]
 [t T1 __interrupt ]
 "2541
 [; ;/opt/microchip/xc8/v2.36/pic/include/proc/pic16f874.h: 2541: extern volatile __bit RCIF __attribute__((address(0x65)));
 [v _RCIF `Vb ~T0 @X0 0 e@101 ]
-"1062
-[; ;/opt/microchip/xc8/v2.36/pic/include/proc/pic16f874.h: 1062: extern volatile unsigned char RCREG __attribute__((address(0x01A)));
-[v _RCREG `Vuc ~T0 @X0 0 e@26 ]
 "2403
 [; ;/opt/microchip/xc8/v2.36/pic/include/proc/pic16f874.h: 2403: extern volatile __bit INTF __attribute__((address(0x59)));
 [v _INTF `Vb ~T0 @X0 0 e@89 ]
@@ -141,6 +147,9 @@ Version 4.0 HI-TECH Software Intermediate Code
 "2334
 [; ;/opt/microchip/xc8/v2.36/pic/include/proc/pic16f874.h: 2334: extern volatile __bit CREN __attribute__((address(0xC4)));
 [v _CREN `Vb ~T0 @X0 0 e@196 ]
+"1988
+[; ;/opt/microchip/xc8/v2.36/pic/include/proc/pic16f874.h: 1988: extern volatile unsigned char TXSTA __attribute__((address(0x098)));
+[v _TXSTA `Vuc ~T0 @X0 0 e@152 ]
 "55 /opt/microchip/xc8/v2.36/pic/include/proc/pic16f874.h
 [; ;/opt/microchip/xc8/v2.36/pic/include/proc/pic16f874.h: 55: __asm("INDF equ 00h");
 [; <" INDF equ 00h ;# ">
@@ -316,384 +325,441 @@ Version 4.0 HI-TECH Software Intermediate Code
 [; ;/opt/microchip/xc8/v2.36/pic/include/proc/pic16f874.h: 2211: __asm("EECON2 equ 018Dh");
 [; <" EECON2 equ 018Dh ;# ">
 "56 elevation_main.c
-[; ;elevation_main.c: 56: 
+[; ;elevation_main.c: 56:             uint16_t command_data = input_command & 0x1FFF;
 [p x FOSC  =  XT         ]
 "57
-[; ;elevation_main.c: 57:             } else if(command == 0b00000111) {
+[; ;elevation_main.c: 57: 
 [p x WDTE  =  OFF         ]
 "58
-[; ;elevation_main.c: 58:                 homing = 1;
+[; ;elevation_main.c: 58:             if(command == 0b00000100){
 [p x PWRTE  =  OFF       ]
 "59
-[; ;elevation_main.c: 59: 
+[; ;elevation_main.c: 59:                 goto_pos = (int) command_data;
 [p x CP  =  OFF          ]
 "60
-[; ;elevation_main.c: 60:             } else if(command == 0b00000110) {
+[; ;elevation_main.c: 60: 
 [p x BOREN  =  ON        ]
 "61
-[; ;elevation_main.c: 61:                 PORTEbits.RE1 = 1;
+[; ;elevation_main.c: 61:             } else if(command == 0b00000011) {
 [p x LVP  =  OFF         ]
 "62
-[; ;elevation_main.c: 62: 
+[; ;elevation_main.c: 62:                 position = (int) command_data;
 [p x CPD  =  OFF         ]
 "63
-[; ;elevation_main.c: 63:             } else if(command == 0b00000101) {
+[; ;elevation_main.c: 63: 
 [p x WRT  =  OFF         ]
 "65
-[; ;elevation_main.c: 65:             }
+[; ;elevation_main.c: 65:                 homing = 1;
 [v _position `i ~T0 @X0 1 e ]
 [i _position
 -> 0 `i
 ]
 "66
-[; ;elevation_main.c: 66:         command_data = 0;
+[; ;elevation_main.c: 66: 
 [v _deadspace `i ~T0 @X0 1 e ]
 [i _deadspace
 -> 10 `i
 ]
 "67
-[; ;elevation_main.c: 67:         command = 0;
+[; ;elevation_main.c: 67:             } else if(command == 0b00000110) {
 [v _goto_pos `i ~T0 @X0 1 e ]
 [i _goto_pos
 -> 0 `i
 ]
 "68
-[; ;elevation_main.c: 68:         input_command = 0;
+[; ;elevation_main.c: 68:                 PORTEbits.RE1 = 1;
 [v _recived_data `uc ~T0 @X0 1 e ]
 [i _recived_data
 -> -> 0 `i `uc
 ]
 "69
-[; ;elevation_main.c: 69:     }
+[; ;elevation_main.c: 69: 
 [v _input_command `ui ~T0 @X0 1 e ]
 [i _input_command
 -> -> 0 `i `ui
 ]
 "71
-[; ;elevation_main.c: 71: 
+[; ;elevation_main.c: 71:                 PORTEbits.RE1 = 0;
 [v _wait_for_UART `uc ~T0 @X0 1 e ]
 [i _wait_for_UART
 -> -> 0 `i `uc
 ]
 "72
-[; ;elevation_main.c: 72: 
+[; ;elevation_main.c: 72:             }
 [v _homing `uc ~T0 @X0 1 e ]
 [i _homing
 -> -> 0 `i `uc
 ]
 "75
-[; ;elevation_main.c: 75:         if(wait_for_UART){
+[; ;elevation_main.c: 75:         input_command = 0;
 [v _check_target `(v ~T0 @X0 1 ef ]
 {
 [e :U _check_target ]
 [f ]
 "77
-[; ;elevation_main.c: 77:             recived_data = 0;
+[; ;elevation_main.c: 77: }
 [e $ ! ! != -> _homing `i -> 0 `i 91  ]
 {
 "78
-[; ;elevation_main.c: 78:             wait_for_UART = 0;
+[; ;elevation_main.c: 78: void uart_rec(){
 [e $ ! > _position _goto_pos 92  ]
 {
 "79
-[; ;elevation_main.c: 79:         }else{
+[; ;elevation_main.c: 79:     if(wait_for_UART){
 [e = . . _PORTDbits 0 2 -> -> 0 `i `uc ]
 "80
-[; ;elevation_main.c: 80:             recived_data = RCREG;
+[; ;elevation_main.c: 80:         trans(recived_data);
 [e = . . _PORTDbits 0 3 -> -> 1 `i `uc ]
 "82
-[; ;elevation_main.c: 82:         }
+[; ;elevation_main.c: 82:         recived_data = 0;
 }
 [e $U 93  ]
 [e :U 92 ]
 [e $ ! < _position _goto_pos 94  ]
 {
 "83
-[; ;elevation_main.c: 83:         RCREG = 0;
+[; ;elevation_main.c: 83:         wait_for_UART = 0;
 [e = . . _PORTDbits 0 3 -> -> 0 `i `uc ]
 "84
-[; ;elevation_main.c: 84:         update_machinestate();
+[; ;elevation_main.c: 84:         trans(RCREG);
 [e = . . _PORTDbits 0 2 -> -> 1 `i `uc ]
 "86
-[; ;elevation_main.c: 86: 
+[; ;elevation_main.c: 86:         recived_data = RCREG;
 }
 [e $U 95  ]
 [e :U 94 ]
 {
 "87
-[; ;elevation_main.c: 87:     if(INTF){
+[; ;elevation_main.c: 87:         wait_for_UART = 1;
 [e = . . _PORTDbits 0 2 -> -> 0 `i `uc ]
 "88
-[; ;elevation_main.c: 88:         INTCONbits.INTF = 0;
+[; ;elevation_main.c: 88:     }
 [e = . . _PORTDbits 0 3 -> -> 0 `i `uc ]
 "90
-[; ;elevation_main.c: 90:         if(PORTBbits.RB1){
+[; ;elevation_main.c: 90: 
 }
 [e :U 95 ]
 [e :U 93 ]
 "91
-[; ;elevation_main.c: 91:             position++;
+[; ;elevation_main.c: 91:     update_machinestate();
 }
 [e $U 96  ]
 [e :U 91 ]
 {
 "93
-[; ;elevation_main.c: 93:             position--;
+[; ;elevation_main.c: 93: 
 [e = . . _PORTDbits 0 2 -> -> 1 `i `uc ]
 "94
-[; ;elevation_main.c: 94:     }
+[; ;elevation_main.c: 94: 
 [e = . . _PORTDbits 0 3 -> -> 0 `i `uc ]
 "95
-[; ;elevation_main.c: 95: 
+[; ;elevation_main.c: 95: void __attribute__((picinterrupt(("")))) isr(void){
 }
 [e :U 96 ]
 "98
-[; ;elevation_main.c: 98:     check_target();
+[; ;elevation_main.c: 98:     }
 [e $ ! != -> . . _PORTDbits 0 1 `i -> 0 `i 97  ]
 {
 "99
-[; ;elevation_main.c: 99: }
+[; ;elevation_main.c: 99: 
 [e = _PORTD -> & -> _PORTD `i -> 247 `i `uc ]
 "100
-[; ;elevation_main.c: 100: 
+[; ;elevation_main.c: 100:     if(INTF){
 [e = _position -> 0 `i ]
 "101
-[; ;elevation_main.c: 101: 
+[; ;elevation_main.c: 101:         INTCONbits.INTF = 0;
 [e = _homing -> -> 0 `i `uc ]
 "102
-[; ;elevation_main.c: 102: 
+[; ;elevation_main.c: 102:         _delay((unsigned long)((1)*(16000000/4000.0)));
 }
 [e :U 97 ]
 "104
-[; ;elevation_main.c: 104: void main(void) {
+[; ;elevation_main.c: 104:             position++;
 [e $ ! != -> . . _PORTDbits 0 0 `i -> 0 `i 98  ]
 {
 "105
-[; ;elevation_main.c: 105:     TRISA = 0xFF;
+[; ;elevation_main.c: 105:         }else{
 [e = _PORTD -> & -> _PORTD `i -> 251 `i `uc ]
 "106
-[; ;elevation_main.c: 106:     TRISB = 0xFF;
+[; ;elevation_main.c: 106:             position--;
 }
 [e :U 98 ]
 "107
-[; ;elevation_main.c: 107:     TRISC = 0xFF;
+[; ;elevation_main.c: 107:     }
 [e :UE 90 ]
 }
 "109
-[; ;elevation_main.c: 109:     TRISEbits.TRISE1 = 0;
+[; ;elevation_main.c: 109: 
+[v _trans `(v ~T0 @X0 1 ef1`uc ]
+"110
+[; ;elevation_main.c: 110:     }
+{
+[e :U _trans ]
+"109
+[; ;elevation_main.c: 109: 
+[v _a `uc ~T0 @X0 1 r1 ]
+"110
+[; ;elevation_main.c: 110:     }
+[f ]
+"111
+[; ;elevation_main.c: 111:     check_target();
+[e $U 100  ]
+[e :U 101 ]
+{
+"112
+[; ;elevation_main.c: 112: }
+[e = _TXREG _a ]
+"113
+[; ;elevation_main.c: 113: 
+}
+[e :U 100 ]
+"111
+[; ;elevation_main.c: 111:     check_target();
+[e $ ! _TRMT 101  ]
+[e :U 102 ]
+"114
+[; ;elevation_main.c: 114: 
+[e :UE 99 ]
+}
+"116
+[; ;elevation_main.c: 116: void main(void) {
 [v _update_machinestate `(v ~T0 @X0 1 ef ]
 {
 [e :U _update_machinestate ]
 [f ]
-"111
-[; ;elevation_main.c: 111:     TRISDbits.TRISD2 = 0;
-[e $ ! != _input_command -> -> 0 `i `ui 100  ]
-{
-"113
-[; ;elevation_main.c: 113:     TRISBbits.TRISB1 = 1;
-[v _command `uc ~T0 @X0 1 a ]
-[e = _command -> >> & _input_command -> 57344 `ui -> 13 `i `uc ]
-"114
-[; ;elevation_main.c: 114:     PORTDbits.RD2 = 0;
-[v _command_data `ui ~T0 @X0 1 a ]
-[e = _command_data & _input_command -> -> 8191 `i `ui ]
-"116
-[; ;elevation_main.c: 116: 
-[e $ ! == -> _command `i -> 4 `i 101  ]
-{
-"117
-[; ;elevation_main.c: 117:     BRGH = 0;
-[e = _goto_pos -> _command_data `i ]
-"119
-[; ;elevation_main.c: 119: 
-}
-[e $U 102  ]
-[e :U 101 ]
-[e $ ! == -> _command `i -> 3 `i 103  ]
+"118
+[; ;elevation_main.c: 118:     TRISB = 0xFF;
+[e $ ! != _input_command -> -> 0 `i `ui 104  ]
 {
 "120
-[; ;elevation_main.c: 120:     SYNC = 0;
-[e = _position -> _command_data `i ]
-"122
-[; ;elevation_main.c: 122: 
-}
-[e $U 104  ]
-[e :U 103 ]
-[e $ ! == -> _command `i -> 7 `i 105  ]
-{
+[; ;elevation_main.c: 120:     TRISC = 0X80;
+[v _command `uc ~T0 @X0 1 a ]
+[e = _command -> >> & _input_command -> 57344 `ui -> 13 `i `uc ]
+"121
+[; ;elevation_main.c: 121: 
+[v _command_data `ui ~T0 @X0 1 a ]
+[e = _command_data & _input_command -> -> 8191 `i `ui ]
 "123
-[; ;elevation_main.c: 123:     INTEDG = 1;
-[e = _homing -> -> 1 `i `uc ]
-"125
-[; ;elevation_main.c: 125: 
+[; ;elevation_main.c: 123:     TRISEbits.TRISE0 = 0;
+[e $ ! == -> _command `i -> 4 `i 105  ]
+{
+"124
+[; ;elevation_main.c: 124:     TRISDbits.TRISD2 = 0;
+[e = _goto_pos -> _command_data `i ]
+"126
+[; ;elevation_main.c: 126:     TRISBbits.TRISB1 = 1;
 }
 [e $U 106  ]
 [e :U 105 ]
-[e $ ! == -> _command `i -> 6 `i 107  ]
+[e $ ! == -> _command `i -> 3 `i 107  ]
 {
-"126
-[; ;elevation_main.c: 126:     RCIE = 1;
-[e = . . _PORTEbits 0 1 -> -> 1 `i `uc ]
-"128
-[; ;elevation_main.c: 128:     GIE = 1;
+"127
+[; ;elevation_main.c: 127:     PORTDbits.RD2 = 0;
+[e = _position -> _command_data `i ]
+"129
+[; ;elevation_main.c: 129: 
 }
 [e $U 108  ]
 [e :U 107 ]
-[e $ ! == -> _command `i -> 5 `i 109  ]
+[e $ ! == -> _command `i -> 7 `i 109  ]
 {
-"129
-[; ;elevation_main.c: 129:     RX9 = 0;
-[e = . . _PORTEbits 0 1 -> -> 0 `i `uc ]
 "130
-[; ;elevation_main.c: 130:     CREN = 1;
-}
-[e :U 109 ]
-[e :U 108 ]
-[e :U 106 ]
-[e :U 104 ]
-[e :U 102 ]
-"131
-[; ;elevation_main.c: 131: 
-[e = _command_data -> -> 0 `i `ui ]
+[; ;elevation_main.c: 130:     BRGH = 0;
+[e = _homing -> -> 1 `i `uc ]
 "132
 [; ;elevation_main.c: 132: 
-[e = _command -> -> 0 `i `uc ]
+}
+[e $U 110  ]
+[e :U 109 ]
+[e $ ! == -> _command `i -> 6 `i 111  ]
+{
 "133
-[; ;elevation_main.c: 133:     INTF = 0;
-[e = _input_command -> -> 0 `i `ui ]
-"134
-[; ;elevation_main.c: 134:     PORTEbits.RE1 =0 ;
-}
-[e :U 100 ]
+[; ;elevation_main.c: 133:     SYNC = 0;
+[e = . . _PORTEbits 0 1 -> -> 1 `i `uc ]
 "135
-[; ;elevation_main.c: 135:     PORTEbits.RE0 =0;
-[e :UE 99 ]
+[; ;elevation_main.c: 135: 
 }
-[v $root$_isr `(v ~T0 @X0 0 e ]
-"138
-[v _isr `(v ~T1 @X0 1 ef ]
+[e $U 112  ]
+[e :U 111 ]
+[e $ ! == -> _command `i -> 5 `i 113  ]
 {
-[e :U _isr ]
-[f ]
-"139
-[e $ ! _RCIF 111  ]
-{
-"140
-[e $ ! != -> _wait_for_UART `i -> 0 `i 112  ]
-{
-"141
-[e = _input_command -> -> || != << -> _recived_data `i -> 8 `i -> 0 `i != -> _RCREG `i -> 0 `i `i `ui ]
-"142
-[e = _recived_data -> -> 0 `i `uc ]
-"143
-[e = _wait_for_UART -> -> 0 `i `uc ]
-"144
-}
-[e $U 113  ]
-[e :U 112 ]
-{
-"145
-[e = _recived_data _RCREG ]
-"146
-[e = _wait_for_UART -> -> 1 `i `uc ]
-"147
+"136
+[; ;elevation_main.c: 136:     INTEDG = 1;
+[e = . . _PORTEbits 0 1 -> -> 0 `i `uc ]
+"137
+[; ;elevation_main.c: 137:     INTE = 1;
 }
 [e :U 113 ]
-"148
-[e = _RCREG -> -> 0 `i `uc ]
-"149
-[e ( _update_machinestate ..  ]
-"150
+[e :U 112 ]
+[e :U 110 ]
+[e :U 108 ]
+[e :U 106 ]
+"138
+[; ;elevation_main.c: 138: 
+[e = _command_data -> -> 0 `i `ui ]
+"139
+[; ;elevation_main.c: 139:     RCIE = 1;
+[e = _command -> -> 0 `i `uc ]
+"140
+[; ;elevation_main.c: 140:     PEIE = 1;
+[e = _input_command -> -> 0 `i `ui ]
+"141
+[; ;elevation_main.c: 141:     GIE = 1;
 }
-[e :U 111 ]
-"152
-[e $ ! _INTF 114  ]
+[e :U 104 ]
+"142
+[; ;elevation_main.c: 142:     RX9 = 0;
+[e :UE 103 ]
+}
+"143
+[; ;elevation_main.c: 143:     CREN = 1;
+[v _uart_rec `(v ~T0 @X0 1 ef ]
 {
-"153
-[e = . . _INTCONbits 0 1 -> -> 0 `i `uc ]
-"154
-[e ( __delay (1 -> * -> -> 1 `i `d / -> -> 16000000 `l `d .4000.0 `ul ]
-"155
-[e $ ! != -> . . _PORTBbits 0 1 `i -> 0 `i 115  ]
+[e :U _uart_rec ]
+[f ]
+"144
+[; ;elevation_main.c: 144: 
+[e $ ! != -> _wait_for_UART `i -> 0 `i 115  ]
 {
-"156
-[e ++ _position -> 1 `i ]
-"157
+"145
+[; ;elevation_main.c: 145:     TXSTA = 0X24;
+[e ( _trans (1 _recived_data ]
+"146
+[; ;elevation_main.c: 146: 
+[e = _input_command -> -> || != << -> _recived_data `i -> 8 `i -> 0 `i != -> _RCREG `i -> 0 `i `i `ui ]
+"147
+[; ;elevation_main.c: 147:     INTF = 0;
+[e = _recived_data -> -> 0 `i `uc ]
+"148
+[; ;elevation_main.c: 148:     PORTEbits.RE1 =0 ;
+[e = _wait_for_UART -> -> 0 `i `uc ]
+"149
+[; ;elevation_main.c: 149:     PORTEbits.RE0 =0;
+[e ( _trans (1 _RCREG ]
+"150
+[; ;elevation_main.c: 150: 
 }
 [e $U 116  ]
 [e :U 115 ]
 {
-"158
-[e -- _position -> 1 `i ]
-"159
+"151
+[; ;elevation_main.c: 151:     return;
+[e = _recived_data _RCREG ]
+"152
+[; ;elevation_main.c: 152: }
+[e = _wait_for_UART -> -> 1 `i `uc ]
+"153
 }
 [e :U 116 ]
-"162
+"154
+[e = _RCREG -> -> 0 `i `uc ]
+"156
+[e ( _update_machinestate ..  ]
+"157
+[e :UE 114 ]
 }
-[e :U 114 ]
+[v $root$_isr `(v ~T0 @X0 0 e ]
+"160
+[v _isr `(v ~T1 @X0 1 ef ]
+{
+[e :U _isr ]
+[f ]
+"161
+[e $ ! _RCIF 118  ]
+{
+"162
+[e ( _uart_rec ..  ]
 "163
+}
+[e :U 118 ]
+"165
+[e $ ! _INTF 119  ]
+{
+"166
+[e = . . _INTCONbits 0 1 -> -> 0 `i `uc ]
+"167
+[e ( __delay (1 -> * -> -> 1 `i `d / -> -> 16000000 `l `d .4000.0 `ul ]
+"168
+[e $ ! != -> . . _PORTBbits 0 1 `i -> 0 `i 120  ]
+{
+"169
+[e ++ _position -> 1 `i ]
+"170
+}
+[e $U 121  ]
+[e :U 120 ]
+{
+"171
+[e -- _position -> 1 `i ]
+"172
+}
+[e :U 121 ]
+"175
+}
+[e :U 119 ]
+"176
 [e ( _check_target ..  ]
-"164
-[e :UE 110 ]
+"177
+[e :UE 117 ]
 }
 [v $root$_main `(v ~T0 @X0 0 e ]
-"169
+"181
 [v _main `(v ~T0 @X0 1 ef ]
 {
 [e :U _main ]
 [f ]
-"170
-[e = _TRISA -> -> 255 `i `uc ]
-"171
-[e = _TRISB -> -> 255 `i `uc ]
-"172
-[e = _TRISC -> -> 255 `i `uc ]
-"174
-[e = . . _TRISEbits 0 1 -> -> 0 `i `uc ]
-"175
-[e = . . _TRISEbits 0 0 -> -> 0 `i `uc ]
-"176
-[e = . . _TRISDbits 0 2 -> -> 0 `i `uc ]
-"177
-[e = . . _TRISDbits 0 3 -> -> 0 `i `uc ]
-"178
-[e = . . _TRISBbits 0 1 -> -> 1 `i `uc ]
-"179
-[e = . . _PORTDbits 0 2 -> -> 0 `i `uc ]
-"180
-[e = . . _PORTDbits 0 3 -> -> 0 `i `uc ]
 "182
-[e = _BRGH -> -> 0 `i `b ]
+[e = _TRISA -> -> 255 `i `uc ]
 "183
-[e = _SPBRG -> -> 25 `i `uc ]
+[e = _TRISB -> -> 255 `i `uc ]
 "185
-[e = _SYNC -> -> 0 `i `b ]
-"186
-[e = _SPEN -> -> 1 `i `b ]
+[e = _TRISC -> -> 128 `i `uc ]
+"187
+[e = . . _TRISEbits 0 1 -> -> 0 `i `uc ]
 "188
-[e = _INTEDG -> -> 1 `i `b ]
+[e = . . _TRISEbits 0 0 -> -> 0 `i `uc ]
 "189
-[e = _INTE -> -> 1 `i `b ]
+[e = . . _TRISDbits 0 2 -> -> 0 `i `uc ]
+"190
+[e = . . _TRISDbits 0 3 -> -> 0 `i `uc ]
 "191
-[e = _RCIE -> -> 1 `i `b ]
+[e = . . _TRISBbits 0 1 -> -> 1 `i `uc ]
 "192
-[e = _PEIE -> -> 1 `i `b ]
+[e = . . _PORTDbits 0 2 -> -> 0 `i `uc ]
 "193
-[e = _GIE -> -> 1 `i `b ]
-"194
-[e = _RX9 -> -> 0 `i `b ]
+[e = . . _PORTDbits 0 3 -> -> 0 `i `uc ]
 "195
-[e = _CREN -> -> 1 `i `b ]
+[e = _BRGH -> -> 0 `i `b ]
+"196
+[e = _SPBRG -> -> 25 `i `uc ]
 "198
-[e = _INTF -> -> 0 `i `b ]
+[e = _SYNC -> -> 0 `i `b ]
 "199
-[e = . . _PORTEbits 0 1 -> -> 0 `i `uc ]
-"200
-[e = . . _PORTEbits 0 0 -> -> 0 `i `uc ]
+[e = _SPEN -> -> 1 `i `b ]
+"201
+[e = _INTEDG -> -> 1 `i `b ]
+"202
+[e = _INTE -> -> 1 `i `b ]
+"204
+[e = _RCIE -> -> 1 `i `b ]
+"205
+[e = _PEIE -> -> 1 `i `b ]
+"206
+[e = _GIE -> -> 1 `i `b ]
+"207
+[e = _RX9 -> -> 0 `i `b ]
+"208
+[e = _CREN -> -> 1 `i `b ]
 "210
-[; ;elevation_main.c: 210:     return;
-[e $UE 117  ]
-"211
-[; ;elevation_main.c: 211: }
-[e :UE 117 ]
+[e = _TXSTA -> -> 36 `i `uc ]
+"212
+[e = _INTF -> -> 0 `i `b ]
+"213
+[e = . . _PORTEbits 0 1 -> -> 0 `i `uc ]
+"214
+[e = . . _PORTEbits 0 0 -> -> 0 `i `uc ]
+"216
+[e $UE 122  ]
+"217
+[e :UE 122 ]
 }

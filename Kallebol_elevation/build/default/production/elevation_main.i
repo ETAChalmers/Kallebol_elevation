@@ -1810,6 +1810,13 @@ void check_target(){
     }
 }
 
+void trans(uint8_t a)
+{
+    while(!TRMT){
+        TXREG=a;
+    }
+}
+
 void update_machinestate(){
 
     if(input_command){
@@ -1837,20 +1844,26 @@ void update_machinestate(){
         input_command = 0;
     }
 }
+void uart_rec(){
+    if(wait_for_UART){
+        trans(recived_data);
+        input_command = (recived_data<<8) || RCREG;
+        recived_data = 0;
+        wait_for_UART = 0;
+        trans(RCREG);
+    }else{
+        recived_data = RCREG;
+        wait_for_UART = 1;
+    }
+    RCREG = 0;
+
+    update_machinestate();
+}
 
 
 void __attribute__((picinterrupt(("")))) isr(void){
     if (RCIF){
-        if(wait_for_UART){
-            input_command = (recived_data<<8) || RCREG;
-            recived_data = 0;
-            wait_for_UART = 0;
-        }else{
-            recived_data = RCREG;
-            wait_for_UART = 1;
-        }
-        RCREG = 0;
-        update_machinestate();
+        uart_rec();
     }
 
     if(INTF){
@@ -1869,11 +1882,11 @@ void __attribute__((picinterrupt(("")))) isr(void){
 
 
 
-
 void main(void) {
     TRISA = 0xFF;
     TRISB = 0xFF;
-    TRISC = 0xFF;
+
+    TRISC = 0X80;
 
     TRISEbits.TRISE1 = 0;
     TRISEbits.TRISE0 = 0;
@@ -1898,10 +1911,11 @@ void main(void) {
     RX9 = 0;
     CREN = 1;
 
+    TXSTA = 0X24;
 
     INTF = 0;
     PORTEbits.RE1 =0 ;
     PORTEbits.RE0 =0;
-# 210 "elevation_main.c"
+
     return;
 }

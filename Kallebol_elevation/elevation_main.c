@@ -106,6 +106,13 @@ void check_target(){
     }
 }
 
+void trans(uint8_t a)
+{
+    while(!TRMT){
+        TXREG=a;
+    }
+}
+
 void update_machinestate(){
 
     if(input_command){
@@ -124,7 +131,7 @@ void update_machinestate(){
                 
             } else if(command == 0b00000110) { //Command to turn on LED1, useful for debug
                 LED1 = 1;
-                
+
             } else if(command == 0b00000101) { //Command to home the device
                 LED1 = 0;
             }
@@ -133,20 +140,26 @@ void update_machinestate(){
         input_command = 0;
     }
 }
+void uart_rec(){
+    if(wait_for_UART){
+        input_command = (recived_data<<8) || RCREG;
+        wait_for_UART = 0;
+        trans(recived_data);
+        recived_data = 0;
+        trans(RCREG);
+    }else{  //If just the first part of the command the MCU will wait for another byte
+        recived_data = RCREG;
+        wait_for_UART = 1;
+    }
+    RCREG = 0; 
+    //Update machinestate is at the end of this statement to allow for echo to propagate before changes
+    update_machinestate();
+}
 
 
 void __interrupt() isr(void){
     if (RCIF){ 
-        if(wait_for_UART){
-            input_command = (recived_data<<8) || RCREG;
-            recived_data = 0;
-            wait_for_UART = 0;
-        }else{  //If just the first part of the command the MCU will wait for another byte
-            recived_data = RCREG;
-            wait_for_UART = 1;
-        }
-        RCREG = 0; 
-        update_machinestate();
+        uart_rec();
     }
     
     if(INTF){
@@ -156,8 +169,7 @@ void __interrupt() isr(void){
             position++;
         }else{
             position--;
-    }
-        
+        }
                     
     }
     check_target();
@@ -165,11 +177,11 @@ void __interrupt() isr(void){
 
 
 
-
 void main(void) {
     TRISA = 0xFF;   //set all digital I/O to inputs
     TRISB = 0xFF;
-    TRISC = 0xFF;
+    //TRISC = 0xFF;
+    TRISC = 0X80; //Enable RX/TX on the device
 
     LED1_TRIS = 0;      //LED1 is an output
     LED2_TRIS = 0;      //LED2 is an output
@@ -194,18 +206,11 @@ void main(void) {
     RX9 = 0;
     CREN = 1;  // Enable UART Data Reception
     
+    TXSTA = 0X24; //Enable TX Async 8-bit mode   
     //RCIF = 0;        //reset the UART interrupt flag
     INTF = 0;        //reset the external interrupt flag
     LED1 =0 ;
     LED2 =0;
 
-
-    
-
-    
-//    while(1)
-//    {  
-//        
-//    }
     return;
 }
