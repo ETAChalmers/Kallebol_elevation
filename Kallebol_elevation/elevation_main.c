@@ -25,7 +25,7 @@
      * 100 - Goto position accoring to the following data
      * 101 - Turn off LED1
      * 110 - Turn on  LED1
-     * 111 - Home the elevation controll
+     * 111 - Home the elevation control
      * 
      
      */
@@ -72,7 +72,6 @@ uint8_t wait_for_UART = 0; //If this flag is high the MCU waits for another UART
 uint8_t homing = 0; //If this flag is high, the machine will home and set the zero position.
 
 
-
 void check_target(){
     
     if(!homing){   
@@ -97,19 +96,46 @@ void check_target(){
     
     
     if(Home){
-        PORTD = PORTD && 0b11110111; //ONLY disallow retraction
+        PORTD = PORTD & 0b11110111; //ONLY disallow retraction
         position = 0;
         homing = 0;
     }
     
     if(Limit){
-        PORTD = PORTD && 0b11111011; //ONLY disallow extention
+        PORTD = PORTD & 0b11111011; //ONLY disallow extention
     }
 }
 
-void interrupt isr()
-{
-      
+void update_machinestate(){
+
+    if(input_command){
+            //Only the top 3 bits are avalible for different commands
+            uint8_t command = ((input_command & 0xE000) >> 13);
+            uint16_t command_data = input_command & 0x1FFF;
+            
+            if(command == 0b00000100){ //Command to initiate movment
+                goto_pos = (int) command_data;         
+                
+            } else if(command == 0b00000011) { //
+                position = (int) command_data;
+                
+            } else if(command == 0b00000111) { //Command to home the device
+                homing = 1;
+                
+            } else if(command == 0b00000110) { //Command to turn on LED1, useful for debug
+                LED1 = 1;
+                
+            } else if(command == 0b00000101) { //Command to home the device
+                LED1 = 0;
+            }
+        command_data = 0;
+        command = 0;
+        input_command = 0;
+    }
+}
+
+
+void __interrupt() isr(void){
     if (RCIF){ 
         if(wait_for_UART){
             input_command = (recived_data<<8) || RCREG;
@@ -120,8 +146,6 @@ void interrupt isr()
             wait_for_UART = 1;
         }
         RCREG = 0; 
-
-        
         update_machinestate();
     }
     
@@ -139,33 +163,6 @@ void interrupt isr()
     check_target();
 }
 
-void update_machinestate(){
-
-    if(input_command){
-            //Only the top 3 bits are avalible for different commands
-            uint8_t command = ((input_command && 0xE000) >> 13);
-            uint16_t command_data = input_command && 0x1FFF;
-            
-            if(command == 0b00000100){ //Command to initiate movment
-                goto_pos = command_data;         
-                
-            } else if(command == 0b00000011) { //
-                position = command_data;
-                
-            } else if(command == 0b00000111) { //Command to home the device
-                homing = 1;
-                
-            } else if(command == 0b00000110) { //Command to turn on LED1, useful for debug
-                LED1 = 1;
-                
-            } else if(command == 0b00000101) { //Command to home the device
-                LED1 = 0;
-            }
-        command_data = 0;
-        command = 0;
-        input_command = 0;
-    }
-}
 
 
 

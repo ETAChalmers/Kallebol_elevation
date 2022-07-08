@@ -24,7 +24,7 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 
 
 # Project Name
-PROJECTNAME=Kallebol_elevation.X
+PROJECTNAME=Kallebol_elevation
 
 # Active Configuration
 DEFAULTCONF=default
