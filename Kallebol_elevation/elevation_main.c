@@ -65,10 +65,11 @@
 int16_t position = 0;
 int16_t deadspace = 10;
 int16_t goto_pos = 0;
-uint8_t recived_data = 0;
-uint16_t input_command = 0;
+uint16_t recived_data = 0;
+uint8_t input_command = 0;
 
-uint8_t wait_for_UART = 0; //If this flag is high the MCU waits for another UART package 
+uint8_t wait_for_UART_data = 0; //If this flag is high the MCU waits for another UART package 
+uint8_t awaiting_command = 1;
 uint8_t homing = 0; //If this flag is high, the machine will home and set the zero position.
 
 
@@ -114,44 +115,62 @@ void trans(uint8_t a)
 }
 
 void update_machinestate(){
+    
+    if(awaiting_command == 0 && wait_for_UART_data == 0){
+        //If a full command has been recived
+        
+        if(input_command == 0b10000100){ // command to move to a absolute position
+            goto_pos = recived_data;
+        } else if(input_command == 0b10000011){ // command to set the current position
+            position = recived_data;  
+        }
+        awaiting_command = 1;
+        recived_data = 0;
+    }
+    
+    
+    if(input_command && awaiting_command){
+        //If a new command byte has been recived
+        trans(input_command);
+        
+        if(input_command & 0b10000000){
+            //If the recived command requires additional data to execute
+            awaiting_command = 0;
+            wait_for_UART_data = 1;
+            return;
 
-    if(input_command){
-            //Only the top 3 bits are avalible for different commands
-            uint8_t command = ((input_command & 0xE000) >> 13);
-            uint16_t command_data = input_command & 0x1FFF;
+        //If the command does not require additional data
+        } else if(input_command == 0b00000111) { //Command to home the device
+            homing = 1;
+                
+        } else if(input_command == 0b00000110) { //Command to turn on LED1, useful for debug
+            LED1 = 1;
+
+        } else if(input_command == 0b00000101) { //Command to home the device
+            LED1 = 0;
+        }
             
-            if(command == 0b00000100){ //Command to initiate movment
-                goto_pos = (int) command_data;         
-                
-            } else if(command == 0b00000011) { //
-                position = (int) command_data;
-                
-            } else if(command == 0b00000111) { //Command to home the device
-                homing = 1;
-                
-            } else if(command == 0b00000110) { //Command to turn on LED1, useful for debug
-                LED1 = 1;
+            
 
-            } else if(command == 0b00000101) { //Command to home the device
-                LED1 = 0;
-            }
-        command_data = 0;
-        command = 0;
-        input_command = 0;
     }
 }
 void uart_rec(){
-    if(wait_for_UART){
-        input_command = (recived_data<<8) || RCREG;
-        wait_for_UART = 0;
-        trans(recived_data);
-        recived_data = 0;
-        trans(RCREG);
-    }else{  //If just the first part of the command the MCU will wait for another byte
-        recived_data = RCREG;
-        wait_for_UART = 1;
+    if(awaiting_command){
+        input_command = RCREG;
+    
+    } else if(!awaiting_command){
+       
+        if(wait_for_UART_data & recived_data){
+            ///If it is now waiting for the last byte in the UART data 
+            recived_data = (RCREG << 8);
+            wait_for_UART_data = 0;
+            
+        } else if(wait_for_UART_data & !recived_data) {
+             //If it is now waiting for the first byte in the UART data 
+            recived_data = RCREG;
+            
+        }
     }
-    RCREG = 0; 
     //Update machinestate is at the end of this statement to allow for echo to propagate before changes
     update_machinestate();
 }
