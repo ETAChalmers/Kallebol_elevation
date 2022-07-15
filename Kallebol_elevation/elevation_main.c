@@ -9,24 +9,21 @@
  /*
   * UART communication
   * 
-  * UART is done without a controll bit at 9600 Baud with 2 8-bit packets (16bit)
-  * The package stucture is as follows.
-  * 0b CCCD DDDD DDDD DDDD
-  * C is command
-  * D is the payload
-  * 
-  * Some commands ignore payload
+  * UART is done without a controll bit at 9600 Baud with 3 8-bit packets (24bit)
+  * The first byte indicates what command is sent
+  * The following bytes are optional and only used if a 0b1xxxxxxx command is sent,
+  * A command that requires additional input
   * 
      Avalible commands
-     * 000 - reserved
-     * 001 - unused 
-     * 010 - unused
-     * 011 - Set current position accoring to the following data
-     * 100 - Goto position accoring to the following data
-     * 101 - Turn off LED1
-     * 110 - Turn on  LED1
-     * 111 - Home the elevation control
+     * 0b00000000 - No operation, can be used to flush a desync, Reserved
      * 
+     * 
+     * 0b10000011 - Set current position accoring to the following data
+     * 0b10000100 - Goto position accoring to the following data
+     * 0b00000101 - Turn off LED1
+     * 0b00000110 - Turn on  LED1
+     * 0b00000111 - Home the elevation control
+     * 0b00001000 - abort homing
      
      */
 
@@ -107,14 +104,14 @@ void check_target(){
     }
 }
 
-void trans(uint8_t a)
-{
+void trans(uint8_t a){
     while(!TRMT){
         TXREG=a;
     }
 }
 
 void update_machinestate(){
+    LED2 = 0;
     
     if(awaiting_command == 0 && wait_for_UART_data == 0){
         //If a full command has been recived
@@ -142,12 +139,18 @@ void update_machinestate(){
         //If the command does not require additional data
         } else if(input_command == 0b00000111) { //Command to home the device
             homing = 1;
+            
+        } else if(input_command == 0b00001000) { //Command to home the device
+            homing = 0;
                 
         } else if(input_command == 0b00000110) { //Command to turn on LED1, useful for debug
             LED1 = 1;
 
-        } else if(input_command == 0b00000101) { //Command to home the device
+        } else if(input_command == 0b00000101) { //Command to turn off LED1, useful for debug
             LED1 = 0;
+        }else{
+            //Invalid command
+            LED2 = 1;
         }
             
             
