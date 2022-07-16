@@ -135,13 +135,14 @@ void update_machinestate(){
         //If a full command has been recived
         
         if(input_command == 0b10000100){ // command to move to a absolute position
-            bitset(PORTE_latch,0);
             goto_pos = recived_data;
         } else if(input_command == 0b10000011){ // command to set the current position
             position = recived_data;  
         }
         awaiting_command = 1;
         recived_data = 0;
+        wait_for_UART_data = 0;
+        input_command = 0;
     }
     
     
@@ -171,11 +172,11 @@ void update_machinestate(){
             bitclr(PORTE_latch,1);
         }else{
             //Invalid command, Set status LED
-            //bitset(PORTE_latch,0);
+            bitset(PORTE_latch,0);
             return;
         }
     }
-   // bitclr(PORTE_latch,0);
+    bitclr(PORTE_latch,0);
    
 }
 void uart_rec(){
@@ -194,13 +195,13 @@ void uart_rec(){
        
         if(wait_for_UART_data == 2){
             ///If it is now waiting for the last byte in the UART data 
-            recived_data |=(RCREG << 8);
+            recived_data |= RCREG;
             wait_for_UART_data = 0;
             
         } else if(wait_for_UART_data == 1 & !recived_data) {
             
              //If it is now waiting for the first byte in the UART data 
-            recived_data = RCREG;
+            recived_data = RCREG << 8;
             wait_for_UART_data = 2;
             
         }

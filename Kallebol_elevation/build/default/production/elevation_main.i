@@ -1769,19 +1769,20 @@ if(awaiting_command == 0 && wait_for_UART_data == 0){
 
 
 if(input_command == 0b10000100){
-((PORTE_latch) |= 1UL << (0));
 goto_pos = recived_data;
 } else if(input_command == 0b10000011){
 position = recived_data;
 }
 awaiting_command = 1;
 recived_data = 0;
+wait_for_UART_data = 0;
+input_command = 0;
 }
 
 
 if(input_command && awaiting_command){
 
-# 154
+# 155
 if(input_command & 0b10000000){
 
 awaiting_command = 0;
@@ -1802,11 +1803,11 @@ homing = 0;
 ((PORTE_latch) &= ~(1UL << (1)));
 }else{
 
-
+((PORTE_latch) |= 1UL << (0));
 return;
 }
 }
-
+((PORTE_latch) &= ~(1UL << (0)));
 
 }
 void uart_rec(){
@@ -1825,13 +1826,13 @@ input_command = RCREG;
 
 if(wait_for_UART_data == 2){
 
-recived_data |=(RCREG << 8);
+recived_data |= RCREG;
 wait_for_UART_data = 0;
 
 } else if(wait_for_UART_data == 1 & !recived_data) {
 
 
-recived_data = RCREG;
+recived_data = RCREG << 8;
 wait_for_UART_data = 2;
 
 }

@@ -1318,375 +1318,384 @@ Version 3.2 HI-TECH Software Intermediate Code
 "137
 [e $ ! == -> _input_command `i -> 132 `i 105  ]
 {
-[; ;elevation_main.c: 138: ((PORTE_latch) |= 1UL << (0));
+[; ;elevation_main.c: 138: goto_pos = recived_data;
 "138
-[e =| _PORTE_latch -> << -> 1 `ul -> 0 `i `uc ]
-[; ;elevation_main.c: 139: goto_pos = recived_data;
-"139
 [e = _goto_pos -> _recived_data `i ]
-"140
+"139
 }
-[; ;elevation_main.c: 140: } else if(input_command == 0b10000011){
+[; ;elevation_main.c: 139: } else if(input_command == 0b10000011){
 [e $U 106  ]
 [e :U 105 ]
 [e $ ! == -> _input_command `i -> 131 `i 107  ]
 {
-[; ;elevation_main.c: 141: position = recived_data;
-"141
+[; ;elevation_main.c: 140: position = recived_data;
+"140
 [e = _position -> _recived_data `i ]
-"142
+"141
 }
 [e :U 107 ]
-"143
+"142
 [e :U 106 ]
-[; ;elevation_main.c: 142: }
-[; ;elevation_main.c: 143: awaiting_command = 1;
+[; ;elevation_main.c: 141: }
+[; ;elevation_main.c: 142: awaiting_command = 1;
 [e = _awaiting_command -> -> 1 `i `uc ]
-[; ;elevation_main.c: 144: recived_data = 0;
-"144
+[; ;elevation_main.c: 143: recived_data = 0;
+"143
 [e = _recived_data -> -> 0 `i `ui ]
+[; ;elevation_main.c: 144: wait_for_UART_data = 0;
+"144
+[e = _wait_for_UART_data -> -> 0 `i `uc ]
+[; ;elevation_main.c: 145: input_command = 0;
 "145
+[e = _input_command -> -> 0 `i `uc ]
+"146
 }
 [e :U 104 ]
-[; ;elevation_main.c: 145: }
-[; ;elevation_main.c: 148: if(input_command && awaiting_command){
-"148
+[; ;elevation_main.c: 146: }
+[; ;elevation_main.c: 149: if(input_command && awaiting_command){
+"149
 [e $ ! && != -> _input_command `i -> -> -> 0 `i `uc `i != -> _awaiting_command `i -> -> -> 0 `i `uc `i 108  ]
 {
-[; ;elevation_main.c: 154: if(input_command & 0b10000000){
-"154
+[; ;elevation_main.c: 155: if(input_command & 0b10000000){
+"155
 [e $ ! != & -> _input_command `i -> 128 `i -> 0 `i 109  ]
 {
-[; ;elevation_main.c: 156: awaiting_command = 0;
-"156
-[e = _awaiting_command -> -> 0 `i `uc ]
-[; ;elevation_main.c: 157: wait_for_UART_data = 1;
+[; ;elevation_main.c: 157: awaiting_command = 0;
 "157
-[e = _wait_for_UART_data -> -> 1 `i `uc ]
-[; ;elevation_main.c: 158: return;
+[e = _awaiting_command -> -> 0 `i `uc ]
+[; ;elevation_main.c: 158: wait_for_UART_data = 1;
 "158
+[e = _wait_for_UART_data -> -> 1 `i `uc ]
+[; ;elevation_main.c: 159: return;
+"159
 [e $UE 103  ]
-"161
+"162
 }
-[; ;elevation_main.c: 161: } else if(input_command == 0b00000111) {
+[; ;elevation_main.c: 162: } else if(input_command == 0b00000111) {
 [e $U 110  ]
 [e :U 109 ]
 [e $ ! == -> _input_command `i -> 7 `i 111  ]
 {
-[; ;elevation_main.c: 162: homing = 1;
-"162
+[; ;elevation_main.c: 163: homing = 1;
+"163
 [e = _homing -> -> 1 `i `uc ]
-"164
+"165
 }
-[; ;elevation_main.c: 164: } else if(input_command == 0b00001000) {
+[; ;elevation_main.c: 165: } else if(input_command == 0b00001000) {
 [e $U 112  ]
 [e :U 111 ]
 [e $ ! == -> _input_command `i -> 8 `i 113  ]
 {
-[; ;elevation_main.c: 165: homing = 0;
-"165
+[; ;elevation_main.c: 166: homing = 0;
+"166
 [e = _homing -> -> 0 `i `uc ]
-"167
+"168
 }
-[; ;elevation_main.c: 167: } else if(input_command == 0b00000110) {
+[; ;elevation_main.c: 168: } else if(input_command == 0b00000110) {
 [e $U 114  ]
 [e :U 113 ]
 [e $ ! == -> _input_command `i -> 6 `i 115  ]
 {
-[; ;elevation_main.c: 168: ((PORTE_latch) |= 1UL << (1));
-"168
+[; ;elevation_main.c: 169: ((PORTE_latch) |= 1UL << (1));
+"169
 [e =| _PORTE_latch -> << -> 1 `ul -> 1 `i `uc ]
-"170
+"171
 }
-[; ;elevation_main.c: 170: } else if(input_command == 0b00000101) {
+[; ;elevation_main.c: 171: } else if(input_command == 0b00000101) {
 [e $U 116  ]
 [e :U 115 ]
 [e $ ! == -> _input_command `i -> 5 `i 117  ]
 {
-[; ;elevation_main.c: 171: ((PORTE_latch) &= ~(1UL << (1)));
-"171
-[e =& _PORTE_latch -> ~ << -> 1 `ul -> 1 `i `uc ]
+[; ;elevation_main.c: 172: ((PORTE_latch) &= ~(1UL << (1)));
 "172
+[e =& _PORTE_latch -> ~ << -> 1 `ul -> 1 `i `uc ]
+"173
 }
-[; ;elevation_main.c: 172: }else{
+[; ;elevation_main.c: 173: }else{
 [e $U 118  ]
 [e :U 117 ]
 {
-[; ;elevation_main.c: 175: return;
+[; ;elevation_main.c: 175: ((PORTE_latch) |= 1UL << (0));
 "175
-[e $UE 103  ]
+[e =| _PORTE_latch -> << -> 1 `ul -> 0 `i `uc ]
+[; ;elevation_main.c: 176: return;
 "176
+[e $UE 103  ]
+"177
 }
 [e :U 118 ]
 [e :U 116 ]
 [e :U 114 ]
 [e :U 112 ]
 [e :U 110 ]
-"177
+"178
 }
 [e :U 108 ]
-[; ;elevation_main.c: 176: }
 [; ;elevation_main.c: 177: }
-[; ;elevation_main.c: 180: }
-"180
+[; ;elevation_main.c: 178: }
+[; ;elevation_main.c: 179: ((PORTE_latch) &= ~(1UL << (0)));
+"179
+[e =& _PORTE_latch -> ~ << -> 1 `ul -> 0 `i `uc ]
+[; ;elevation_main.c: 181: }
+"181
 [e :UE 103 ]
 }
-"181
+"182
 [v _uart_rec `(v ~T0 @X0 1 ef ]
 {
-[; ;elevation_main.c: 181: void uart_rec(){
+[; ;elevation_main.c: 182: void uart_rec(){
 [e :U _uart_rec ]
 [f ]
-[; ;elevation_main.c: 183: if(RCSTAbits.OERR){
-"183
+[; ;elevation_main.c: 184: if(RCSTAbits.OERR){
+"184
 [e $ ! != -> . . _RCSTAbits 0 1 `i -> -> -> 0 `i `Vuc `i 120  ]
 {
-[; ;elevation_main.c: 184: CREN = 0;
-"184
-[e = _CREN -> -> 0 `i `b ]
-[; ;elevation_main.c: 185: __nop();
+[; ;elevation_main.c: 185: CREN = 0;
 "185
-[e ( ___nop ..  ]
-[; ;elevation_main.c: 186: CREN=1;
+[e = _CREN -> -> 0 `i `b ]
+[; ;elevation_main.c: 186: __nop();
 "186
-[e = _CREN -> -> 1 `i `b ]
+[e ( ___nop ..  ]
+[; ;elevation_main.c: 187: CREN=1;
 "187
+[e = _CREN -> -> 1 `i `b ]
+"188
 }
 [e :U 120 ]
-[; ;elevation_main.c: 187: }
-[; ;elevation_main.c: 189: if(awaiting_command){
-"189
+[; ;elevation_main.c: 188: }
+[; ;elevation_main.c: 190: if(awaiting_command){
+"190
 [e $ ! != -> _awaiting_command `i -> -> -> 0 `i `uc `i 121  ]
 {
-[; ;elevation_main.c: 190: input_command = RCREG;
-"190
+[; ;elevation_main.c: 191: input_command = RCREG;
+"191
 [e = _input_command _RCREG ]
-"192
+"193
 }
-[; ;elevation_main.c: 192: } else if(!awaiting_command){
+[; ;elevation_main.c: 193: } else if(!awaiting_command){
 [e $U 122  ]
 [e :U 121 ]
 [e $ ! ! != -> _awaiting_command `i -> -> -> 0 `i `uc `i 123  ]
 {
-[; ;elevation_main.c: 195: if(wait_for_UART_data == 2){
-"195
+[; ;elevation_main.c: 196: if(wait_for_UART_data == 2){
+"196
 [e $ ! == -> _wait_for_UART_data `i -> 2 `i 124  ]
 {
-[; ;elevation_main.c: 197: recived_data |=(RCREG << 8);
-"197
-[e =| _recived_data -> << -> _RCREG `i -> 8 `i `ui ]
-[; ;elevation_main.c: 198: wait_for_UART_data = 0;
+[; ;elevation_main.c: 198: recived_data |= RCREG;
 "198
+[e =| _recived_data -> _RCREG `ui ]
+[; ;elevation_main.c: 199: wait_for_UART_data = 0;
+"199
 [e = _wait_for_UART_data -> -> 0 `i `uc ]
-"200
+"201
 }
-[; ;elevation_main.c: 200: } else if(wait_for_UART_data == 1 & !recived_data) {
+[; ;elevation_main.c: 201: } else if(wait_for_UART_data == 1 & !recived_data) {
 [e $U 125  ]
 [e :U 124 ]
 [e $ ! & == -> _wait_for_UART_data `i -> 1 `i ! != _recived_data -> -> 0 `i `ui 126  ]
 {
-[; ;elevation_main.c: 203: recived_data = RCREG;
-"203
-[e = _recived_data -> _RCREG `ui ]
-[; ;elevation_main.c: 204: wait_for_UART_data = 2;
+[; ;elevation_main.c: 204: recived_data = RCREG << 8;
 "204
+[e = _recived_data -> << -> _RCREG `i -> 8 `i `ui ]
+[; ;elevation_main.c: 205: wait_for_UART_data = 2;
+"205
 [e = _wait_for_UART_data -> -> 2 `i `uc ]
-"206
+"207
 }
 [e :U 126 ]
-"207
+"208
 [e :U 125 ]
 }
 [e :U 123 ]
-"209
+"210
 [e :U 122 ]
-[; ;elevation_main.c: 206: }
 [; ;elevation_main.c: 207: }
-[; ;elevation_main.c: 209: update_machinestate();
+[; ;elevation_main.c: 208: }
+[; ;elevation_main.c: 210: update_machinestate();
 [e ( _update_machinestate ..  ]
-[; ;elevation_main.c: 211: PORTE = PORTE_latch;
-"211
-[e = _PORTE _PORTE_latch ]
-[; ;elevation_main.c: 212: PORTD = PORTD_latch;
+[; ;elevation_main.c: 212: PORTE = PORTE_latch;
 "212
-[e = _PORTD _PORTD_latch ]
-[; ;elevation_main.c: 213: if(awaiting_command){
+[e = _PORTE _PORTE_latch ]
+[; ;elevation_main.c: 213: PORTD = PORTD_latch;
 "213
+[e = _PORTD _PORTD_latch ]
+[; ;elevation_main.c: 214: if(awaiting_command){
+"214
 [e $ ! != -> _awaiting_command `i -> -> -> 0 `i `uc `i 127  ]
 {
-[; ;elevation_main.c: 214: input_command = 0;
-"214
-[e = _input_command -> -> 0 `i `uc ]
+[; ;elevation_main.c: 215: input_command = 0;
 "215
+[e = _input_command -> -> 0 `i `uc ]
+"216
 }
 [e :U 127 ]
-[; ;elevation_main.c: 215: }
 [; ;elevation_main.c: 216: }
-"216
+[; ;elevation_main.c: 217: }
+"217
 [e :UE 119 ]
 }
 [v $root$_isr `(v ~T0 @X0 0 e ]
-"219
+"220
 [v _isr `(v ~T4 @X0 1 ef ]
 {
-[; ;elevation_main.c: 219: void __interrupt() isr(void){
+[; ;elevation_main.c: 220: void __interrupt() isr(void){
 [e :U _isr ]
 [f ]
-[; ;elevation_main.c: 221: if (RCIF){
-"221
+[; ;elevation_main.c: 222: if (RCIF){
+"222
 [e $ ! _RCIF 129  ]
 {
-[; ;elevation_main.c: 222: RCIF = 0;
-"222
-[e = _RCIF -> -> 0 `i `b ]
-[; ;elevation_main.c: 223: uart_rec();
+[; ;elevation_main.c: 223: RCIF = 0;
 "223
-[e ( _uart_rec ..  ]
-[; ;elevation_main.c: 224: RCREG = 0;
+[e = _RCIF -> -> 0 `i `b ]
+[; ;elevation_main.c: 224: uart_rec();
 "224
+[e ( _uart_rec ..  ]
+[; ;elevation_main.c: 225: RCREG = 0;
+"225
 [e = _RCREG -> -> 0 `i `uc ]
-"226
+"227
 }
 [e :U 129 ]
-[; ;elevation_main.c: 226: }
-[; ;elevation_main.c: 228: if(INTF){
-"228
+[; ;elevation_main.c: 227: }
+[; ;elevation_main.c: 229: if(INTF){
+"229
 [e $ ! _INTF 130  ]
 {
-[; ;elevation_main.c: 229: INTF = 0;
-"229
+[; ;elevation_main.c: 230: INTF = 0;
+"230
 [e = _INTF -> -> 0 `i `b ]
-[; ;elevation_main.c: 231: if(PORTBbits.RB1){
-"231
+[; ;elevation_main.c: 232: if(PORTBbits.RB1){
+"232
 [e $ ! != -> . . _PORTBbits 0 1 `i -> -> -> 0 `i `Vuc `i 131  ]
 {
-[; ;elevation_main.c: 232: position++;
-"232
-[e ++ _position -> 1 `i ]
+[; ;elevation_main.c: 233: position++;
 "233
+[e ++ _position -> 1 `i ]
+"234
 }
-[; ;elevation_main.c: 233: }else{
+[; ;elevation_main.c: 234: }else{
 [e $U 132  ]
 [e :U 131 ]
 {
-[; ;elevation_main.c: 234: position--;
-"234
-[e -- _position -> 1 `i ]
+[; ;elevation_main.c: 235: position--;
 "235
+[e -- _position -> 1 `i ]
+"236
 }
 [e :U 132 ]
-"237
+"238
 }
 [e :U 130 ]
-[; ;elevation_main.c: 235: }
-[; ;elevation_main.c: 237: }
-[; ;elevation_main.c: 238: check_target();
-"238
-[e ( _check_target ..  ]
-[; ;elevation_main.c: 239: }
+[; ;elevation_main.c: 236: }
+[; ;elevation_main.c: 238: }
+[; ;elevation_main.c: 239: check_target();
 "239
+[e ( _check_target ..  ]
+[; ;elevation_main.c: 240: }
+"240
 [e :UE 128 ]
 }
 [v $root$_main `(v ~T0 @X0 0 e ]
-"242
+"243
 [v _main `(v ~T0 @X0 1 ef ]
 {
-[; ;elevation_main.c: 242: void main(void) {
+[; ;elevation_main.c: 243: void main(void) {
 [e :U _main ]
 [f ]
-[; ;elevation_main.c: 244: TRISA = 0xFF;
-"244
-[e = _TRISA -> -> 255 `i `uc ]
-[; ;elevation_main.c: 245: TRISB = 0xFF;
+[; ;elevation_main.c: 245: TRISA = 0xFF;
 "245
-[e = _TRISB -> -> 255 `i `uc ]
-[; ;elevation_main.c: 246: TRISC = 0xFF;
+[e = _TRISA -> -> 255 `i `uc ]
+[; ;elevation_main.c: 246: TRISB = 0xFF;
 "246
+[e = _TRISB -> -> 255 `i `uc ]
+[; ;elevation_main.c: 247: TRISC = 0xFF;
+"247
 [e = _TRISC -> -> 255 `i `uc ]
-[; ;elevation_main.c: 248: TRISCbits.TRISC6 = 1;
-"248
-[e = . . _TRISCbits 0 6 -> -> 1 `i `uc ]
-[; ;elevation_main.c: 249: TRISCbits.TRISC7 = 0;
+[; ;elevation_main.c: 249: TRISCbits.TRISC6 = 1;
 "249
+[e = . . _TRISCbits 0 6 -> -> 1 `i `uc ]
+[; ;elevation_main.c: 250: TRISCbits.TRISC7 = 0;
+"250
 [e = . . _TRISCbits 0 7 -> -> 0 `i `uc ]
-[; ;elevation_main.c: 251: TRISEbits.TRISE1 = 0;
-"251
-[e = . . _TRISEbits 0 1 -> -> 0 `i `uc ]
-[; ;elevation_main.c: 252: TRISEbits.TRISE0 = 0;
+[; ;elevation_main.c: 252: TRISEbits.TRISE1 = 0;
 "252
-[e = . . _TRISEbits 0 0 -> -> 0 `i `uc ]
-[; ;elevation_main.c: 253: TRISDbits.TRISD2 = 0;
+[e = . . _TRISEbits 0 1 -> -> 0 `i `uc ]
+[; ;elevation_main.c: 253: TRISEbits.TRISE0 = 0;
 "253
-[e = . . _TRISDbits 0 2 -> -> 0 `i `uc ]
-[; ;elevation_main.c: 254: TRISDbits.TRISD3 = 0;
+[e = . . _TRISEbits 0 0 -> -> 0 `i `uc ]
+[; ;elevation_main.c: 254: TRISDbits.TRISD2 = 0;
 "254
-[e = . . _TRISDbits 0 3 -> -> 0 `i `uc ]
-[; ;elevation_main.c: 255: TRISBbits.TRISB1 = 1;
+[e = . . _TRISDbits 0 2 -> -> 0 `i `uc ]
+[; ;elevation_main.c: 255: TRISDbits.TRISD3 = 0;
 "255
+[e = . . _TRISDbits 0 3 -> -> 0 `i `uc ]
+[; ;elevation_main.c: 256: TRISBbits.TRISB1 = 1;
+"256
 [e = . . _TRISBbits 0 1 -> -> 1 `i `uc ]
-[; ;elevation_main.c: 258: BRGH = 0;
-"258
-[e = _BRGH -> -> 0 `i `b ]
-[; ;elevation_main.c: 259: SPBRG = 25;
+[; ;elevation_main.c: 259: BRGH = 0;
 "259
+[e = _BRGH -> -> 0 `i `b ]
+[; ;elevation_main.c: 260: SPBRG = 25;
+"260
 [e = _SPBRG -> -> 25 `i `uc ]
-[; ;elevation_main.c: 261: SYNC = 0;
-"261
-[e = _SYNC -> -> 0 `i `b ]
-[; ;elevation_main.c: 262: SPEN = 1;
+[; ;elevation_main.c: 262: SYNC = 0;
 "262
-[e = _SPEN -> -> 1 `i `b ]
-[; ;elevation_main.c: 263: TXIE = 0;
+[e = _SYNC -> -> 0 `i `b ]
+[; ;elevation_main.c: 263: SPEN = 1;
 "263
-[e = _TXIE -> -> 0 `i `b ]
-[; ;elevation_main.c: 264: TXEN = 1;
+[e = _SPEN -> -> 1 `i `b ]
+[; ;elevation_main.c: 264: TXIE = 0;
 "264
-[e = _TXEN -> -> 1 `i `b ]
-[; ;elevation_main.c: 265: TX9 = 0;
+[e = _TXIE -> -> 0 `i `b ]
+[; ;elevation_main.c: 265: TXEN = 1;
 "265
-[e = _TX9 -> -> 0 `i `b ]
-[; ;elevation_main.c: 266: RX9 = 0;
+[e = _TXEN -> -> 1 `i `b ]
+[; ;elevation_main.c: 266: TX9 = 0;
 "266
+[e = _TX9 -> -> 0 `i `b ]
+[; ;elevation_main.c: 267: RX9 = 0;
+"267
 [e = _RX9 -> -> 0 `i `b ]
-[; ;elevation_main.c: 269: CREN = 1;
-"269
+[; ;elevation_main.c: 270: CREN = 1;
+"270
 [e = _CREN -> -> 1 `i `b ]
-[; ;elevation_main.c: 271: INTEDG = 1;
-"271
-[e = _INTEDG -> -> 1 `i `b ]
-[; ;elevation_main.c: 272: INTE = 1;
+[; ;elevation_main.c: 272: INTEDG = 1;
 "272
+[e = _INTEDG -> -> 1 `i `b ]
+[; ;elevation_main.c: 273: INTE = 1;
+"273
 [e = _INTE -> -> 1 `i `b ]
-[; ;elevation_main.c: 275: RCIE = 1;
-"275
-[e = _RCIE -> -> 1 `i `b ]
-[; ;elevation_main.c: 276: PEIE = 1;
+[; ;elevation_main.c: 276: RCIE = 1;
 "276
-[e = _PEIE -> -> 1 `i `b ]
-[; ;elevation_main.c: 277: GIE = 1;
+[e = _RCIE -> -> 1 `i `b ]
+[; ;elevation_main.c: 277: PEIE = 1;
 "277
+[e = _PEIE -> -> 1 `i `b ]
+[; ;elevation_main.c: 278: GIE = 1;
+"278
 [e = _GIE -> -> 1 `i `b ]
-[; ;elevation_main.c: 282: RCIF = 0;
-"282
+[; ;elevation_main.c: 283: RCIF = 0;
+"283
 [e = _RCIF -> -> 0 `i `b ]
-[; ;elevation_main.c: 284: INTF = 0;
-"284
+[; ;elevation_main.c: 285: INTF = 0;
+"285
 [e = _INTF -> -> 0 `i `b ]
-[; ;elevation_main.c: 286: while(1){
-"286
+[; ;elevation_main.c: 287: while(1){
+"287
 [e :U 135 ]
 {
-"287
+"288
 }
 [e :U 134 ]
-"286
+"287
 [e $U 135  ]
 [e :U 136 ]
-[; ;elevation_main.c: 287: }
-[; ;elevation_main.c: 288: return;
-"288
-[e $UE 133  ]
-[; ;elevation_main.c: 289: }
+[; ;elevation_main.c: 288: }
+[; ;elevation_main.c: 289: return;
 "289
+[e $UE 133  ]
+[; ;elevation_main.c: 290: }
+"290
 [e :UE 133 ]
 }
