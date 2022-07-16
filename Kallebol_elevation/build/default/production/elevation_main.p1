@@ -7,44 +7,23 @@ Version 3.2 HI-TECH Software Intermediate Code
 [n S11 . . ]
 "358
 [v _PORTDbits `VS11 ~T0 @X0 0 e@8 ]
-"341
-[v _PORTD `Vuc ~T0 @X0 0 e@8 ]
 "1055
 [v _TXREG `Vuc ~T0 @X0 0 e@25 ]
 "2814
 [v _TRMT `Vb ~T0 @X0 0 e@1217 ]
-"409
-[s S14 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
-[n S14 . RE0 RE1 RE2 ]
-"408
-[u S13 `S14 1 ]
-[n S13 . . ]
-"415
-[v _PORTEbits `VS13 ~T0 @X0 0 e@9 ]
 "1062
 [v _RCREG `Vuc ~T0 @X0 0 e@26 ]
+"403
+[v _PORTE `Vuc ~T0 @X0 0 e@9 ]
+"341
+[v _PORTD `Vuc ~T0 @X0 0 e@8 ]
 [t ~ __interrupt . k ]
 [t T4 __interrupt  ]
 "2541
 [v _RCIF `Vb ~T0 @X0 0 e@101 ]
 "2403
 [v _INTF `Vb ~T0 @X0 0 e@89 ]
-"461
-[s S18 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
-[n S18 . RBIF INTF T0IF RBIE INTE T0IE PEIE GIE ]
-"471
-[s S19 :2 `uc 1 :1 `uc 1 :2 `uc 1 :1 `uc 1 ]
-[n S19 . . TMR0IF . TMR0IE ]
-"460
-[u S17 `S18 1 `S19 1 ]
-[n S17 . . . ]
-"478
-[v _INTCONbits `VS17 ~T0 @X0 0 e@11 ]
-[v F38 `(v ~T0 @X0 1 tf1`ul ]
-"12 /opt/microchip/xc8/v2.36/pic/include/builtins.h
-[v __delay `JF38 ~T0 @X0 0 e ]
-[p i __delay ]
-"223 /opt/microchip/xc8/v2.36/pic/include/proc/pic16f874.h
+"223
 [s S8 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
 [n S8 . RB0 RB1 RB2 RB3 RB4 RB5 RB6 RB7 ]
 "222
@@ -105,8 +84,6 @@ Version 3.2 HI-TECH Software Intermediate Code
 [v _RX9 `Vb ~T0 @X0 0 e@198 ]
 "2334
 [v _CREN `Vb ~T0 @X0 0 e@196 ]
-"1988
-[v _TXSTA `Vuc ~T0 @X0 0 e@152 ]
 [; ;xc.h: 18: extern const char __xc8_OPTIM_SPEED;
 [; ;xc.h: 20: extern double __fpnormalize(double);
 [; ;xc8debug.h: 14: extern void __builtin_software_breakpoint(void);
@@ -1090,526 +1067,549 @@ Version 3.2 HI-TECH Software Intermediate Code
 [; ;pic.h: 118: extern __bank0 unsigned char __resetbits;
 [; ;pic.h: 119: extern __bank0 __bit __powerdown;
 [; ;pic.h: 120: extern __bank0 __bit __timeout;
-"53 elevation_main.c
+"56 elevation_main.c
 [p x FOSC=XT ]
-"54
-[p x WDTE=OFF ]
-"55
-[p x PWRTE=OFF ]
-"56
-[p x CP=OFF ]
 "57
-[p x BOREN=ON ]
+[p x WDTE=OFF ]
 "58
-[p x LVP=OFF ]
+[p x PWRTE=OFF ]
 "59
-[p x CPD=OFF ]
+[p x CP=OFF ]
 "60
-[p x WRT=OFF ]
+[p x BOREN=ON ]
+"61
+[p x LVP=OFF ]
 "62
+[p x CPD=OFF ]
+"63
+[p x WRT=OFF ]
+"65
 [v _position `i ~T0 @X0 1 e ]
 [i _position
 -> 0 `i
 ]
-[; ;elevation_main.c: 62: int16_t position = 0;
-"63
+[; ;elevation_main.c: 65: int16_t position = 0;
+"66
 [v _deadspace `i ~T0 @X0 1 e ]
 [i _deadspace
 -> 10 `i
 ]
-[; ;elevation_main.c: 63: int16_t deadspace = 10;
-"64
+[; ;elevation_main.c: 66: int16_t deadspace = 10;
+"67
 [v _goto_pos `i ~T0 @X0 1 e ]
 [i _goto_pos
 -> 0 `i
 ]
-[; ;elevation_main.c: 64: int16_t goto_pos = 0;
-"65
+[; ;elevation_main.c: 67: int16_t goto_pos = 0;
+"68
 [v _recived_data `ui ~T0 @X0 1 e ]
 [i _recived_data
 -> -> 0 `i `ui
 ]
-[; ;elevation_main.c: 65: uint16_t recived_data = 0;
-"66
+[; ;elevation_main.c: 68: uint16_t recived_data = 0;
+"69
 [v _input_command `uc ~T0 @X0 1 e ]
 [i _input_command
 -> -> 0 `i `uc
 ]
-[; ;elevation_main.c: 66: uint8_t input_command = 0;
-"68
+[; ;elevation_main.c: 69: uint8_t input_command = 0;
+"71
 [v _wait_for_UART_data `uc ~T0 @X0 1 e ]
 [i _wait_for_UART_data
 -> -> 0 `i `uc
 ]
-[; ;elevation_main.c: 68: uint8_t wait_for_UART_data = 0;
-"69
+[; ;elevation_main.c: 71: uint8_t wait_for_UART_data = 0;
+"72
 [v _awaiting_command `uc ~T0 @X0 1 e ]
 [i _awaiting_command
 -> -> 1 `i `uc
 ]
-[; ;elevation_main.c: 69: uint8_t awaiting_command = 1;
-"70
+[; ;elevation_main.c: 72: uint8_t awaiting_command = 1;
+"73
 [v _homing `uc ~T0 @X0 1 e ]
 [i _homing
 -> -> 0 `i `uc
 ]
-[; ;elevation_main.c: 70: uint8_t homing = 0;
-"73
+[; ;elevation_main.c: 73: uint8_t homing = 0;
+"76
+[v _PORTE_latch `uc ~T0 @X0 1 e ]
+[i _PORTE_latch
+-> -> 0 `i `uc
+]
+[; ;elevation_main.c: 76: uint8_t PORTE_latch =0x00;
+"77
+[v _PORTD_latch `uc ~T0 @X0 1 e ]
+[i _PORTD_latch
+-> -> 0 `i `uc
+]
+[; ;elevation_main.c: 77: uint8_t PORTD_latch =0x00;
+"81
 [v _check_target `(v ~T0 @X0 1 ef ]
 {
-[; ;elevation_main.c: 73: void check_target(){
+[; ;elevation_main.c: 81: void check_target(){
 [e :U _check_target ]
 [f ]
-[; ;elevation_main.c: 75: if(!homing){
-"75
+[; ;elevation_main.c: 83: if(!homing){
+"83
 [e $ ! ! != -> _homing `i -> -> -> 0 `i `uc `i 91  ]
 {
-[; ;elevation_main.c: 76: if(position > goto_pos){
-"76
+[; ;elevation_main.c: 84: if(position > goto_pos){
+"84
 [e $ ! > _position _goto_pos 92  ]
 {
-[; ;elevation_main.c: 77: PORTDbits.RD2 = 0;
-"77
-[e = . . _PORTDbits 0 2 -> -> 0 `i `uc ]
-[; ;elevation_main.c: 78: PORTDbits.RD3 = 1;
-"78
-[e = . . _PORTDbits 0 3 -> -> 1 `i `uc ]
-"80
+[; ;elevation_main.c: 87: PORTD_latch &= 0b11111011;
+"87
+[e =& _PORTD_latch -> -> 251 `i `uc ]
+[; ;elevation_main.c: 88: PORTD_latch |= 0b00001000;
+"88
+[e =| _PORTD_latch -> -> 8 `i `uc ]
+"90
 }
-[; ;elevation_main.c: 80: }else if(position < goto_pos){
+[; ;elevation_main.c: 90: }else if(position < goto_pos){
 [e $U 93  ]
 [e :U 92 ]
 [e $ ! < _position _goto_pos 94  ]
 {
-[; ;elevation_main.c: 81: PORTDbits.RD3 = 0;
-"81
-[e = . . _PORTDbits 0 3 -> -> 0 `i `uc ]
-[; ;elevation_main.c: 82: PORTDbits.RD2 = 1;
-"82
-[e = . . _PORTDbits 0 2 -> -> 1 `i `uc ]
-"84
+[; ;elevation_main.c: 93: PORTD_latch |= 0b00000100;
+"93
+[e =| _PORTD_latch -> -> 4 `i `uc ]
+[; ;elevation_main.c: 94: PORTD_latch &= 0b11110111;
+"94
+[e =& _PORTD_latch -> -> 247 `i `uc ]
+"96
 }
-[; ;elevation_main.c: 84: }else{
+[; ;elevation_main.c: 96: }else{
 [e $U 95  ]
 [e :U 94 ]
 {
-[; ;elevation_main.c: 85: PORTDbits.RD2 = 0;
-"85
-[e = . . _PORTDbits 0 2 -> -> 0 `i `uc ]
-[; ;elevation_main.c: 86: PORTDbits.RD3 = 0;
-"86
-[e = . . _PORTDbits 0 3 -> -> 0 `i `uc ]
-"88
+[; ;elevation_main.c: 97: PORTD_latch &= 0b11110011;
+"97
+[e =& _PORTD_latch -> -> 243 `i `uc ]
+"100
 }
 [e :U 95 ]
 [e :U 93 ]
-"89
+"101
 }
-[; ;elevation_main.c: 88: }
-[; ;elevation_main.c: 89: }else{
+[; ;elevation_main.c: 100: }
+[; ;elevation_main.c: 101: }else{
 [e $U 96  ]
 [e :U 91 ]
 {
-[; ;elevation_main.c: 91: PORTDbits.RD2 = 1;
-"91
-[e = . . _PORTDbits 0 2 -> -> 1 `i `uc ]
-[; ;elevation_main.c: 92: PORTDbits.RD3 = 0;
-"92
-[e = . . _PORTDbits 0 3 -> -> 0 `i `uc ]
-"93
+[; ;elevation_main.c: 103: PORTD_latch &= 0b11111011;
+"103
+[e =& _PORTD_latch -> -> 251 `i `uc ]
+[; ;elevation_main.c: 104: PORTD_latch |= 0b00001000;
+"104
+[e =| _PORTD_latch -> -> 8 `i `uc ]
+"105
 }
 [e :U 96 ]
-[; ;elevation_main.c: 93: }
-[; ;elevation_main.c: 96: if(PORTDbits.RD1){
-"96
+[; ;elevation_main.c: 105: }
+[; ;elevation_main.c: 108: if(PORTDbits.RD1){
+"108
 [e $ ! != -> . . _PORTDbits 0 1 `i -> -> -> 0 `i `Vuc `i 97  ]
 {
-[; ;elevation_main.c: 97: PORTD = PORTD & 0b11110111;
-"97
-[e = _PORTD -> & -> _PORTD `i -> 247 `i `uc ]
-[; ;elevation_main.c: 98: position = 0;
-"98
+[; ;elevation_main.c: 109: PORTD_latch &= 0b11110111;
+"109
+[e =& _PORTD_latch -> -> 247 `i `uc ]
+[; ;elevation_main.c: 111: position = 0;
+"111
 [e = _position -> 0 `i ]
-[; ;elevation_main.c: 99: homing = 0;
-"99
+[; ;elevation_main.c: 112: homing = 0;
+"112
 [e = _homing -> -> 0 `i `uc ]
-"100
+"113
 }
 [e :U 97 ]
-[; ;elevation_main.c: 100: }
-[; ;elevation_main.c: 102: if(PORTDbits.RD0){
-"102
+[; ;elevation_main.c: 113: }
+[; ;elevation_main.c: 115: if(PORTDbits.RD0){
+"115
 [e $ ! != -> . . _PORTDbits 0 0 `i -> -> -> 0 `i `Vuc `i 98  ]
 {
-[; ;elevation_main.c: 103: PORTD = PORTD & 0b11111011;
-"103
-[e = _PORTD -> & -> _PORTD `i -> 251 `i `uc ]
-"104
+[; ;elevation_main.c: 116: PORTD_latch &= 0b11111011;
+"116
+[e =& _PORTD_latch -> -> 251 `i `uc ]
+"118
 }
 [e :U 98 ]
-[; ;elevation_main.c: 104: }
-[; ;elevation_main.c: 105: }
-"105
+[; ;elevation_main.c: 118: }
+[; ;elevation_main.c: 119: }
+"119
 [e :UE 90 ]
 }
-"107
+"121
 [v _trans `(v ~T0 @X0 1 ef1`uc ]
 {
-[; ;elevation_main.c: 107: void trans(uint8_t a){
+[; ;elevation_main.c: 121: void trans(uint8_t a){
 [e :U _trans ]
 [v _a `uc ~T0 @X0 1 r1 ]
 [f ]
-[; ;elevation_main.c: 108: while(!TRMT){
-"108
+[; ;elevation_main.c: 122: while(!TRMT){
+"122
 [e $U 100  ]
 [e :U 101 ]
 {
-[; ;elevation_main.c: 109: TXREG=a;
-"109
+[; ;elevation_main.c: 123: TXREG=a;
+"123
 [e = _TXREG _a ]
-"110
+"124
 }
 [e :U 100 ]
-"108
+"122
 [e $ ! _TRMT 101  ]
 [e :U 102 ]
-[; ;elevation_main.c: 110: }
-[; ;elevation_main.c: 111: }
-"111
+[; ;elevation_main.c: 124: }
+[; ;elevation_main.c: 125: }
+"125
 [e :UE 99 ]
 }
-"113
+"127
 [v _update_machinestate `(v ~T0 @X0 1 ef ]
 {
-[; ;elevation_main.c: 113: void update_machinestate(){
+[; ;elevation_main.c: 127: void update_machinestate(){
 [e :U _update_machinestate ]
 [f ]
-[; ;elevation_main.c: 114: PORTEbits.RE0 = 0;
-"114
-[e = . . _PORTEbits 0 0 -> -> 0 `i `uc ]
-[; ;elevation_main.c: 116: if(awaiting_command == 0 && wait_for_UART_data == 0){
-"116
+[; ;elevation_main.c: 130: if(awaiting_command == 0 && wait_for_UART_data == 0){
+"130
 [e $ ! && == -> _awaiting_command `i -> 0 `i == -> _wait_for_UART_data `i -> 0 `i 104  ]
 {
-[; ;elevation_main.c: 119: if(input_command == 0b10000100){
-"119
+[; ;elevation_main.c: 133: if(input_command == 0b10000100){
+"133
 [e $ ! == -> _input_command `i -> 132 `i 105  ]
 {
-[; ;elevation_main.c: 120: goto_pos = recived_data;
-"120
+[; ;elevation_main.c: 134: goto_pos = recived_data;
+"134
 [e = _goto_pos -> _recived_data `i ]
-"121
+"135
 }
-[; ;elevation_main.c: 121: } else if(input_command == 0b10000011){
+[; ;elevation_main.c: 135: } else if(input_command == 0b10000011){
 [e $U 106  ]
 [e :U 105 ]
 [e $ ! == -> _input_command `i -> 131 `i 107  ]
 {
-[; ;elevation_main.c: 122: position = recived_data;
-"122
+[; ;elevation_main.c: 136: position = recived_data;
+"136
 [e = _position -> _recived_data `i ]
-"123
+"137
 }
 [e :U 107 ]
-"124
+"138
 [e :U 106 ]
-[; ;elevation_main.c: 123: }
-[; ;elevation_main.c: 124: awaiting_command = 1;
+[; ;elevation_main.c: 137: }
+[; ;elevation_main.c: 138: awaiting_command = 1;
 [e = _awaiting_command -> -> 1 `i `uc ]
-[; ;elevation_main.c: 125: recived_data = 0;
-"125
+[; ;elevation_main.c: 139: recived_data = 0;
+"139
 [e = _recived_data -> -> 0 `i `ui ]
-"126
-}
-[e :U 104 ]
-[; ;elevation_main.c: 126: }
-[; ;elevation_main.c: 129: if(input_command && awaiting_command){
-"129
-[e $ ! && != -> _input_command `i -> -> -> 0 `i `uc `i != -> _awaiting_command `i -> -> -> 0 `i `uc `i 108  ]
-{
-[; ;elevation_main.c: 131: trans(input_command);
-"131
-[e ( _trans (1 _input_command ]
-[; ;elevation_main.c: 133: if(input_command & 0b10000000){
-"133
-[e $ ! != & -> _input_command `i -> 128 `i -> 0 `i 109  ]
-{
-[; ;elevation_main.c: 135: awaiting_command = 0;
-"135
-[e = _awaiting_command -> -> 0 `i `uc ]
-[; ;elevation_main.c: 136: wait_for_UART_data = 1;
-"136
-[e = _wait_for_UART_data -> -> 1 `i `uc ]
-[; ;elevation_main.c: 137: return;
-"137
-[e $UE 103  ]
 "140
 }
-[; ;elevation_main.c: 140: } else if(input_command == 0b00000111) {
+[e :U 104 ]
+[; ;elevation_main.c: 140: }
+[; ;elevation_main.c: 143: if(input_command && awaiting_command){
+"143
+[e $ ! && != -> _input_command `i -> -> -> 0 `i `uc `i != -> _awaiting_command `i -> -> -> 0 `i `uc `i 108  ]
+{
+[; ;elevation_main.c: 145: trans(input_command);
+"145
+[e ( _trans (1 _input_command ]
+[; ;elevation_main.c: 147: if(input_command & 0b10000000){
+"147
+[e $ ! != & -> _input_command `i -> 128 `i -> 0 `i 109  ]
+{
+[; ;elevation_main.c: 149: awaiting_command = 0;
+"149
+[e = _awaiting_command -> -> 0 `i `uc ]
+[; ;elevation_main.c: 150: wait_for_UART_data = 1;
+"150
+[e = _wait_for_UART_data -> -> 1 `i `uc ]
+[; ;elevation_main.c: 151: return;
+"151
+[e $UE 103  ]
+"154
+}
+[; ;elevation_main.c: 154: } else if(input_command == 0b00000111) {
 [e $U 110  ]
 [e :U 109 ]
 [e $ ! == -> _input_command `i -> 7 `i 111  ]
 {
-[; ;elevation_main.c: 141: homing = 1;
-"141
+[; ;elevation_main.c: 155: homing = 1;
+"155
 [e = _homing -> -> 1 `i `uc ]
-"143
+"157
 }
-[; ;elevation_main.c: 143: } else if(input_command == 0b00001000) {
+[; ;elevation_main.c: 157: } else if(input_command == 0b00001000) {
 [e $U 112  ]
 [e :U 111 ]
 [e $ ! == -> _input_command `i -> 8 `i 113  ]
 {
-[; ;elevation_main.c: 144: homing = 0;
-"144
+[; ;elevation_main.c: 158: homing = 0;
+"158
 [e = _homing -> -> 0 `i `uc ]
-"146
+"160
 }
-[; ;elevation_main.c: 146: } else if(input_command == 0b00000110) {
+[; ;elevation_main.c: 160: } else if(input_command == 0b00000110) {
 [e $U 114  ]
 [e :U 113 ]
 [e $ ! == -> _input_command `i -> 6 `i 115  ]
 {
-[; ;elevation_main.c: 147: PORTEbits.RE1 = 1;
-"147
-[e = . . _PORTEbits 0 1 -> -> 1 `i `uc ]
-"149
+[; ;elevation_main.c: 163: ((PORTE_latch) |= 1UL << (1));
+"163
+[e =| _PORTE_latch -> << -> 1 `ul -> 1 `i `uc ]
+"165
 }
-[; ;elevation_main.c: 149: } else if(input_command == 0b00000101) {
+[; ;elevation_main.c: 165: } else if(input_command == 0b00000101) {
 [e $U 116  ]
 [e :U 115 ]
 [e $ ! == -> _input_command `i -> 5 `i 117  ]
 {
-[; ;elevation_main.c: 150: PORTEbits.RE1 = 0;
-"150
-[e = . . _PORTEbits 0 1 -> -> 0 `i `uc ]
-"151
+[; ;elevation_main.c: 168: ((PORTE_latch) &= ~(1UL << (1)));
+"168
+[e =& _PORTE_latch -> ~ << -> 1 `ul -> 1 `i `uc ]
+"169
 }
-[; ;elevation_main.c: 151: }else{
+[; ;elevation_main.c: 169: }else{
 [e $U 118  ]
 [e :U 117 ]
 {
-[; ;elevation_main.c: 153: PORTEbits.RE0 = 1;
-"153
-[e = . . _PORTEbits 0 0 -> -> 1 `i `uc ]
-"154
+[; ;elevation_main.c: 173: ((PORTE_latch) |= 1UL << (0));
+"173
+[e =| _PORTE_latch -> << -> 1 `ul -> 0 `i `uc ]
+[; ;elevation_main.c: 174: return;
+"174
+[e $UE 103  ]
+"175
 }
 [e :U 118 ]
 [e :U 116 ]
 [e :U 114 ]
 [e :U 112 ]
 [e :U 110 ]
-"158
+"176
 }
 [e :U 108 ]
-[; ;elevation_main.c: 154: }
-[; ;elevation_main.c: 158: }
-[; ;elevation_main.c: 159: }
-"159
+[; ;elevation_main.c: 175: }
+[; ;elevation_main.c: 176: }
+[; ;elevation_main.c: 179: ((PORTE_latch) &= ~(1UL << (0)));
+"179
+[e =& _PORTE_latch -> ~ << -> 1 `ul -> 0 `i `uc ]
+[; ;elevation_main.c: 180: }
+"180
 [e :UE 103 ]
 }
-"160
+"181
 [v _uart_rec `(v ~T0 @X0 1 ef ]
 {
-[; ;elevation_main.c: 160: void uart_rec(){
+[; ;elevation_main.c: 181: void uart_rec(){
 [e :U _uart_rec ]
 [f ]
-[; ;elevation_main.c: 161: if(awaiting_command){
-"161
+[; ;elevation_main.c: 182: if(awaiting_command){
+"182
 [e $ ! != -> _awaiting_command `i -> -> -> 0 `i `uc `i 120  ]
 {
-[; ;elevation_main.c: 162: input_command = RCREG;
-"162
+[; ;elevation_main.c: 183: input_command = RCREG;
+"183
 [e = _input_command _RCREG ]
-"164
+"185
 }
-[; ;elevation_main.c: 164: } else if(!awaiting_command){
+[; ;elevation_main.c: 185: } else if(!awaiting_command){
 [e $U 121  ]
 [e :U 120 ]
 [e $ ! ! != -> _awaiting_command `i -> -> -> 0 `i `uc `i 122  ]
 {
-[; ;elevation_main.c: 166: if(wait_for_UART_data & recived_data){
-"166
+[; ;elevation_main.c: 187: if(wait_for_UART_data & recived_data){
+"187
 [e $ ! != & -> _wait_for_UART_data `ui _recived_data -> -> 0 `i `ui 123  ]
 {
-[; ;elevation_main.c: 168: recived_data = (RCREG << 8);
-"168
-[e = _recived_data -> << -> _RCREG `i -> 8 `i `ui ]
-[; ;elevation_main.c: 169: wait_for_UART_data = 0;
-"169
+[; ;elevation_main.c: 189: recived_data = (uint8_t) (RCREG << 8);
+"189
+[e = _recived_data -> -> << -> _RCREG `i -> 8 `i `uc `ui ]
+[; ;elevation_main.c: 190: wait_for_UART_data = 0;
+"190
 [e = _wait_for_UART_data -> -> 0 `i `uc ]
-"171
+"192
 }
-[; ;elevation_main.c: 171: } else if(wait_for_UART_data & !recived_data) {
+[; ;elevation_main.c: 192: } else if(wait_for_UART_data & !recived_data) {
 [e $U 124  ]
 [e :U 123 ]
 [e $ ! != & -> _wait_for_UART_data `i -> ! != _recived_data -> -> 0 `i `ui `i -> 0 `i 125  ]
 {
-[; ;elevation_main.c: 173: recived_data = RCREG;
-"173
+[; ;elevation_main.c: 194: recived_data = RCREG;
+"194
 [e = _recived_data -> _RCREG `ui ]
-"175
+"196
 }
 [e :U 125 ]
-"176
+"197
 [e :U 124 ]
 }
 [e :U 122 ]
-"178
+"199
 [e :U 121 ]
-[; ;elevation_main.c: 175: }
-[; ;elevation_main.c: 176: }
-[; ;elevation_main.c: 178: update_machinestate();
+[; ;elevation_main.c: 196: }
+[; ;elevation_main.c: 197: }
+[; ;elevation_main.c: 199: update_machinestate();
 [e ( _update_machinestate ..  ]
-[; ;elevation_main.c: 179: }
-"179
+[; ;elevation_main.c: 201: PORTE = PORTE_latch;
+"201
+[e = _PORTE _PORTE_latch ]
+[; ;elevation_main.c: 202: PORTD = PORTD_latch;
+"202
+[e = _PORTD _PORTD_latch ]
+[; ;elevation_main.c: 203: input_command = 0;
+"203
+[e = _input_command -> -> 0 `i `uc ]
+[; ;elevation_main.c: 204: }
+"204
 [e :UE 119 ]
 }
 [v $root$_isr `(v ~T0 @X0 0 e ]
-"182
+"207
 [v _isr `(v ~T4 @X0 1 ef ]
 {
-[; ;elevation_main.c: 182: void __interrupt() isr(void){
+[; ;elevation_main.c: 207: void __interrupt() isr(void){
 [e :U _isr ]
 [f ]
-[; ;elevation_main.c: 183: if (RCIF){
-"183
+[; ;elevation_main.c: 210: if (RCIF){
+"210
 [e $ ! _RCIF 127  ]
 {
-[; ;elevation_main.c: 184: uart_rec();
-"184
+[; ;elevation_main.c: 211: RCIF = 0;
+"211
+[e = _RCIF -> -> 0 `i `b ]
+[; ;elevation_main.c: 212: uart_rec();
+"212
 [e ( _uart_rec ..  ]
-"185
+[; ;elevation_main.c: 213: RCREG = 0;
+"213
+[e = _RCREG -> -> 0 `i `uc ]
+"216
 }
 [e :U 127 ]
-[; ;elevation_main.c: 185: }
-[; ;elevation_main.c: 187: if(INTF){
-"187
+[; ;elevation_main.c: 216: }
+[; ;elevation_main.c: 219: if(INTF){
+"219
 [e $ ! _INTF 128  ]
 {
-[; ;elevation_main.c: 188: INTCONbits.INTF = 0;
-"188
-[e = . . _INTCONbits 0 1 -> -> 0 `i `uc ]
-[; ;elevation_main.c: 189: _delay((unsigned long)((1)*(16000000/4000.0)));
-"189
-[e ( __delay (1 -> * -> -> 1 `i `d / -> -> 16000000 `l `d .4000.0 `ul ]
-[; ;elevation_main.c: 190: if(PORTBbits.RB1){
-"190
+[; ;elevation_main.c: 220: INTF = 0;
+"220
+[e = _INTF -> -> 0 `i `b ]
+[; ;elevation_main.c: 222: if(PORTBbits.RB1){
+"222
 [e $ ! != -> . . _PORTBbits 0 1 `i -> -> -> 0 `i `Vuc `i 129  ]
 {
-[; ;elevation_main.c: 191: position++;
-"191
+[; ;elevation_main.c: 223: position++;
+"223
 [e ++ _position -> 1 `i ]
-"192
+"224
 }
-[; ;elevation_main.c: 192: }else{
+[; ;elevation_main.c: 224: }else{
 [e $U 130  ]
 [e :U 129 ]
 {
-[; ;elevation_main.c: 193: position--;
-"193
+[; ;elevation_main.c: 225: position--;
+"225
 [e -- _position -> 1 `i ]
-"194
+"226
 }
 [e :U 130 ]
-"196
+"228
 }
 [e :U 128 ]
-[; ;elevation_main.c: 194: }
-[; ;elevation_main.c: 196: }
-[; ;elevation_main.c: 197: check_target();
-"197
+[; ;elevation_main.c: 226: }
+[; ;elevation_main.c: 228: }
+[; ;elevation_main.c: 229: check_target();
+"229
 [e ( _check_target ..  ]
-[; ;elevation_main.c: 198: }
-"198
+[; ;elevation_main.c: 232: }
+"232
 [e :UE 126 ]
 }
 [v $root$_main `(v ~T0 @X0 0 e ]
-"202
+"235
 [v _main `(v ~T0 @X0 1 ef ]
 {
-[; ;elevation_main.c: 202: void main(void) {
+[; ;elevation_main.c: 235: void main(void) {
 [e :U _main ]
 [f ]
-[; ;elevation_main.c: 203: TRISA = 0xFF;
-"203
-[e = _TRISA -> -> 255 `i `uc ]
-[; ;elevation_main.c: 204: TRISB = 0xFF;
-"204
-[e = _TRISB -> -> 255 `i `uc ]
-[; ;elevation_main.c: 206: TRISC = 0X80;
-"206
-[e = _TRISC -> -> 128 `i `uc ]
-[; ;elevation_main.c: 208: TRISEbits.TRISE1 = 0;
-"208
-[e = . . _TRISEbits 0 1 -> -> 0 `i `uc ]
-[; ;elevation_main.c: 209: TRISEbits.TRISE0 = 0;
-"209
-[e = . . _TRISEbits 0 0 -> -> 0 `i `uc ]
-[; ;elevation_main.c: 210: TRISDbits.TRISD2 = 0;
-"210
-[e = . . _TRISDbits 0 2 -> -> 0 `i `uc ]
-[; ;elevation_main.c: 211: TRISDbits.TRISD3 = 0;
-"211
-[e = . . _TRISDbits 0 3 -> -> 0 `i `uc ]
-[; ;elevation_main.c: 212: TRISBbits.TRISB1 = 1;
-"212
-[e = . . _TRISBbits 0 1 -> -> 1 `i `uc ]
-[; ;elevation_main.c: 213: PORTDbits.RD2 = 0;
-"213
-[e = . . _PORTDbits 0 2 -> -> 0 `i `uc ]
-[; ;elevation_main.c: 214: PORTDbits.RD3 = 0;
-"214
-[e = . . _PORTDbits 0 3 -> -> 0 `i `uc ]
-[; ;elevation_main.c: 216: BRGH = 0;
-"216
-[e = _BRGH -> -> 0 `i `b ]
-[; ;elevation_main.c: 217: SPBRG = 25;
-"217
-[e = _SPBRG -> -> 25 `i `uc ]
-[; ;elevation_main.c: 219: SYNC = 0;
-"219
-[e = _SYNC -> -> 0 `i `b ]
-[; ;elevation_main.c: 220: SPEN = 1;
-"220
-[e = _SPEN -> -> 1 `i `b ]
-[; ;elevation_main.c: 222: INTEDG = 1;
-"222
-[e = _INTEDG -> -> 1 `i `b ]
-[; ;elevation_main.c: 223: INTE = 1;
-"223
-[e = _INTE -> -> 1 `i `b ]
-[; ;elevation_main.c: 225: RCIE = 1;
-"225
-[e = _RCIE -> -> 1 `i `b ]
-[; ;elevation_main.c: 226: PEIE = 1;
-"226
-[e = _PEIE -> -> 1 `i `b ]
-[; ;elevation_main.c: 227: GIE = 1;
-"227
-[e = _GIE -> -> 1 `i `b ]
-[; ;elevation_main.c: 228: RX9 = 0;
-"228
-[e = _RX9 -> -> 0 `i `b ]
-[; ;elevation_main.c: 229: CREN = 1;
-"229
-[e = _CREN -> -> 1 `i `b ]
-[; ;elevation_main.c: 231: TXSTA = 0X24;
-"231
-[e = _TXSTA -> -> 36 `i `uc ]
-[; ;elevation_main.c: 233: INTF = 0;
-"233
-[e = _INTF -> -> 0 `i `b ]
-[; ;elevation_main.c: 234: PORTEbits.RE1 =0 ;
-"234
-[e = . . _PORTEbits 0 1 -> -> 0 `i `uc ]
-[; ;elevation_main.c: 235: PORTEbits.RE0 =0;
-"235
-[e = . . _PORTEbits 0 0 -> -> 0 `i `uc ]
-[; ;elevation_main.c: 237: return;
+[; ;elevation_main.c: 237: TRISA = 0xFF;
 "237
-[e $UE 131  ]
-[; ;elevation_main.c: 238: }
+[e = _TRISA -> -> 255 `i `uc ]
+[; ;elevation_main.c: 238: TRISB = 0xFF;
 "238
+[e = _TRISB -> -> 255 `i `uc ]
+[; ;elevation_main.c: 240: TRISC = 0X80;
+"240
+[e = _TRISC -> -> 128 `i `uc ]
+[; ;elevation_main.c: 242: TRISEbits.TRISE1 = 0;
+"242
+[e = . . _TRISEbits 0 1 -> -> 0 `i `uc ]
+[; ;elevation_main.c: 243: TRISEbits.TRISE0 = 0;
+"243
+[e = . . _TRISEbits 0 0 -> -> 0 `i `uc ]
+[; ;elevation_main.c: 244: TRISDbits.TRISD2 = 0;
+"244
+[e = . . _TRISDbits 0 2 -> -> 0 `i `uc ]
+[; ;elevation_main.c: 245: TRISDbits.TRISD3 = 0;
+"245
+[e = . . _TRISDbits 0 3 -> -> 0 `i `uc ]
+[; ;elevation_main.c: 246: TRISBbits.TRISB1 = 1;
+"246
+[e = . . _TRISBbits 0 1 -> -> 1 `i `uc ]
+[; ;elevation_main.c: 249: BRGH = 0;
+"249
+[e = _BRGH -> -> 0 `i `b ]
+[; ;elevation_main.c: 250: SPBRG = 25;
+"250
+[e = _SPBRG -> -> 25 `i `uc ]
+[; ;elevation_main.c: 252: SYNC = 0;
+"252
+[e = _SYNC -> -> 0 `i `b ]
+[; ;elevation_main.c: 253: SPEN = 1;
+"253
+[e = _SPEN -> -> 1 `i `b ]
+[; ;elevation_main.c: 255: INTEDG = 1;
+"255
+[e = _INTEDG -> -> 1 `i `b ]
+[; ;elevation_main.c: 256: INTE = 1;
+"256
+[e = _INTE -> -> 1 `i `b ]
+[; ;elevation_main.c: 258: RCIE = 1;
+"258
+[e = _RCIE -> -> 1 `i `b ]
+[; ;elevation_main.c: 259: PEIE = 1;
+"259
+[e = _PEIE -> -> 1 `i `b ]
+[; ;elevation_main.c: 260: GIE = 1;
+"260
+[e = _GIE -> -> 1 `i `b ]
+[; ;elevation_main.c: 261: RX9 = 0;
+"261
+[e = _RX9 -> -> 0 `i `b ]
+[; ;elevation_main.c: 262: CREN = 1;
+"262
+[e = _CREN -> -> 1 `i `b ]
+[; ;elevation_main.c: 265: RCIF = 0;
+"265
+[e = _RCIF -> -> 0 `i `b ]
+[; ;elevation_main.c: 266: INTF = 0;
+"266
+[e = _INTF -> -> 0 `i `b ]
+[; ;elevation_main.c: 268: while(1){
+"268
+[e :U 133 ]
+{
+"269
+}
+[e :U 132 ]
+"268
+[e $U 133  ]
+[e :U 134 ]
+[; ;elevation_main.c: 269: }
+[; ;elevation_main.c: 270: return;
+"270
+[e $UE 131  ]
+[; ;elevation_main.c: 271: }
+"271
 [e :UE 131 ]
 }

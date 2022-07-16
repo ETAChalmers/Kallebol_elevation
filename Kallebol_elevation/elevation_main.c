@@ -34,9 +34,9 @@
 
 #define _XTAL_FREQ 16000000 // 16'000'000Hz
 
-#define LED1                PORTEbits.RE1
+#define LED1                PORTEbits.RE1 //Hardware designation = D3 on pin 10
 #define LED1_TRIS           TRISEbits.TRISE1
-#define LED2                PORTEbits.RE0
+#define LED2                PORTEbits.RE0 //Hardware designation = D1 on pin 9
 #define LED2_TRIS           TRISEbits.TRISE0
 
 #define Limit               PORTDbits.RD0
@@ -49,6 +49,9 @@
 #define PW_port             PORTD
 #define Encode_dir          PORTBbits.RB1
 #define Encode_dir_TRIS     TRISBbits.TRISB1
+
+#define bitset(var, bitno) ((var) |= 1UL << (bitno))
+#define bitclr(var, bitno) ((var) &= ~(1UL << (bitno)))
 
 #pragma config FOSC = XT        // Oscillator Selection bits (RC oscillator)
 #pragma config WDTE = OFF        // Watchdog Timer Enable bit (WDT enabled)
@@ -69,38 +72,49 @@ uint8_t wait_for_UART_data = 0; //If this flag is high the MCU waits for another
 uint8_t awaiting_command = 1;
 uint8_t homing = 0; //If this flag is high, the machine will home and set the zero position.
 
+//Using latch registers as recomended by XC8 manual 3.7.4
+uint8_t PORTE_latch =0x00; 
+uint8_t PORTD_latch =0x00;
+//uint8_t PORTB_latch =0x00;
+
 
 void check_target(){
     
-    if(!homing){   
+    if(!homing){
         if(position > goto_pos){ //If position is greater than goto
-            PW1 = 0;
-            PW2 = 1;
+            //PW1 = 0;
+            //PW2 = 1;
+            PORTD_latch &= 0b11111011; //PD2/PW1 = 0
+            PORTD_latch |= 0b00001000; //PD3/PW2 = 1    
 
-           }else if(position < goto_pos){ //If position is 
-               PW2 = 0;
-               PW1 = 1;   
+        }else if(position < goto_pos){ //If position is 
+            //PW2 = 0;
+            //PW1 = 1;
+            PORTD_latch |= 0b00000100; //PD2/PW1 = 1
+            PORTD_latch &= 0b11110111; //PD3/PW2 = 0 
 
-           }else{
-               PW1 = 0;
-               PW2 = 0;
+        }else{
+            PORTD_latch &= 0b11110011; //PD2&PD3 = 0
+            //Position reached
 
-           }
+        }
     }else{  //if homing sequence is active
         
-        PW1 = 1; //Make sure this direction is correct,
-        PW2 = 0; //This should be retracting
+        PORTD_latch &= 0b11111011; //PD2/PW1 = 0
+        PORTD_latch |= 0b00001000; //PD3/PW2 = 1    
     }
     
     
     if(Home){
-        PORTD = PORTD & 0b11110111; //ONLY disallow retraction
+        PORTD_latch &= 0b11110111; 
+        //ONLY disallow retraction as it is in an end state
         position = 0;
         homing = 0;
     }
     
     if(Limit){
-        PORTD = PORTD & 0b11111011; //ONLY disallow extention
+        PORTD_latch &= 0b11111011; 
+        //ONLY disallow extention as it is in an end state
     }
 }
 
@@ -111,7 +125,7 @@ void trans(uint8_t a){
 }
 
 void update_machinestate(){
-    LED2 = 0;
+    
     
     if(awaiting_command == 0 && wait_for_UART_data == 0){
         //If a full command has been recived
@@ -144,18 +158,25 @@ void update_machinestate(){
             homing = 0;
                 
         } else if(input_command == 0b00000110) { //Command to turn on LED1, useful for debug
-            LED1 = 1;
+            //LED1 = 1;
+            //PORTE |= 0b00000010;
+            bitset(PORTE_latch,1);
 
         } else if(input_command == 0b00000101) { //Command to turn off LED1, useful for debug
-            LED1 = 0;
+            //LED1 = 0;
+            //PORTE &= 0b11111101;
+            bitclr(PORTE_latch,1);
         }else{
             //Invalid command
-            LED2 = 1;
+            //LED2 = 1; 
+            //PORTE |= 0b00000001;
+            bitset(PORTE_latch,0);
+            return;
         }
-            
-            
-
     }
+    //LED2 = 0;
+    //PORTE &= 0b11111110;
+    bitclr(PORTE_latch,0);
 }
 void uart_rec(){
     if(awaiting_command){
@@ -165,7 +186,7 @@ void uart_rec(){
        
         if(wait_for_UART_data & recived_data){
             ///If it is now waiting for the last byte in the UART data 
-            recived_data = (RCREG << 8);
+            recived_data = (uint8_t) (RCREG << 8);
             wait_for_UART_data = 0;
             
         } else if(wait_for_UART_data & !recived_data) {
@@ -176,30 +197,43 @@ void uart_rec(){
     }
     //Update machinestate is at the end of this statement to allow for echo to propagate before changes
     update_machinestate();
+    //Latching in ports
+    PORTE = PORTE_latch; 
+    PORTD = PORTD_latch;
+    input_command = 0;
 }
 
 
 void __interrupt() isr(void){
-    if (RCIF){ 
-        uart_rec();
-    }
+    //LED2 = 1;
     
+    if (RCIF){ 
+        RCIF = 0;
+        uart_rec();
+        RCREG = 0;
+        
+        
+    }
+    //LED2 = 0;
+    //LED1 = 1;
     if(INTF){
-        INTCONbits.INTF = 0;
-        __delay_ms(1);
+        INTF = 0;
+        //__delay_ms(1);
         if(Encode_dir){
             position++;
         }else{
             position--;
         }
-                    
+                  
     }
     check_target();
+    
+    //LED1 = 0;
 }
 
 
-
 void main(void) {
+
     TRISA = 0xFF;   //set all digital I/O to inputs
     TRISB = 0xFF;
     //TRISC = 0xFF;
@@ -210,8 +244,7 @@ void main(void) {
     PW1_TRIS = 0;       //Halfbridge powerpin 1
     PW2_TRIS = 0;       //Halfbridge powerpin 2
     Encode_dir_TRIS = 1; //The flag for wich way the encoder is spinning
-    PW1 = 0;
-    PW2 = 0;
+
     
     BRGH = 0;  // High-Speed Baud Rate
     SPBRG = 25; // Set The Baud Rate To Be 9615 baud (datasheet Table 10.4)
@@ -228,11 +261,11 @@ void main(void) {
     RX9 = 0;
     CREN = 1;  // Enable UART Data Reception
     
-    TXSTA = 0X24; //Enable TX Async 8-bit mode   
-    //RCIF = 0;        //reset the UART interrupt flag
+    //TXSTA = 0X24; //Enable TX Async 8-bit mode   
+    RCIF = 0;        //reset the UART interrupt flag
     INTF = 0;        //reset the external interrupt flag
-    LED1 =0 ;
-    LED2 =0;
-
+    
+    while(1){ //Horrendus but for some reason main() kept executing
+    }
     return;
 }

@@ -1686,7 +1686,7 @@ extern __bank0 __bit __powerdown;
 extern __bank0 __bit __timeout;
 
 
-# 53 "elevation_main.c"
+# 56 "elevation_main.c"
 #pragma config FOSC = XT
 #pragma config WDTE = OFF
 #pragma config PWRTE = OFF
@@ -1707,37 +1707,48 @@ uint8_t awaiting_command = 1;
 uint8_t homing = 0;
 
 
+uint8_t PORTE_latch =0x00;
+uint8_t PORTD_latch =0x00;
+
+
+
 void check_target(){
 
 if(!homing){
 if(position > goto_pos){
-PORTDbits.RD2 = 0;
-PORTDbits.RD3 = 1;
+
+
+PORTD_latch &= 0b11111011;
+PORTD_latch |= 0b00001000;
 
 }else if(position < goto_pos){
-PORTDbits.RD3 = 0;
-PORTDbits.RD2 = 1;
+
+
+PORTD_latch |= 0b00000100;
+PORTD_latch &= 0b11110111;
 
 }else{
-PORTDbits.RD2 = 0;
-PORTDbits.RD3 = 0;
+PORTD_latch &= 0b11110011;
+
 
 }
 }else{
 
-PORTDbits.RD2 = 1;
-PORTDbits.RD3 = 0;
+PORTD_latch &= 0b11111011;
+PORTD_latch |= 0b00001000;
 }
 
 
 if(PORTDbits.RD1){
-PORTD = PORTD & 0b11110111;
+PORTD_latch &= 0b11110111;
+
 position = 0;
 homing = 0;
 }
 
 if(PORTDbits.RD0){
-PORTD = PORTD & 0b11111011;
+PORTD_latch &= 0b11111011;
+
 }
 }
 
@@ -1748,7 +1759,7 @@ TXREG=a;
 }
 
 void update_machinestate(){
-PORTEbits.RE0 = 0;
+
 
 if(awaiting_command == 0 && wait_for_UART_data == 0){
 
@@ -1781,18 +1792,25 @@ homing = 1;
 homing = 0;
 
 } else if(input_command == 0b00000110) {
-PORTEbits.RE1 = 1;
+
+
+((PORTE_latch) |= 1UL << (1));
 
 } else if(input_command == 0b00000101) {
-PORTEbits.RE1 = 0;
+
+
+((PORTE_latch) &= ~(1UL << (1)));
 }else{
 
-PORTEbits.RE0 = 1;
+
+
+((PORTE_latch) |= 1UL << (0));
+return;
+}
 }
 
 
-
-}
+((PORTE_latch) &= ~(1UL << (0)));
 }
 void uart_rec(){
 if(awaiting_command){
@@ -1802,7 +1820,7 @@ input_command = RCREG;
 
 if(wait_for_UART_data & recived_data){
 
-recived_data = (RCREG << 8);
+recived_data = (uint8_t) (RCREG << 8);
 wait_for_UART_data = 0;
 
 } else if(wait_for_UART_data & !recived_data) {
@@ -1813,17 +1831,28 @@ recived_data = RCREG;
 }
 
 update_machinestate();
+
+PORTE = PORTE_latch;
+PORTD = PORTD_latch;
+input_command = 0;
 }
 
 
 void __interrupt() isr(void){
+
+
 if (RCIF){
+RCIF = 0;
 uart_rec();
+RCREG = 0;
+
+
 }
 
+
 if(INTF){
-INTCONbits.INTF = 0;
-_delay((unsigned long)((1)*(16000000/4000.0)));
+INTF = 0;
+
 if(PORTBbits.RB1){
 position++;
 }else{
@@ -1832,11 +1861,13 @@ position--;
 
 }
 check_target();
+
+
 }
 
 
-
 void main(void) {
+
 TRISA = 0xFF;
 TRISB = 0xFF;
 
@@ -1847,8 +1878,7 @@ TRISEbits.TRISE0 = 0;
 TRISDbits.TRISD2 = 0;
 TRISDbits.TRISD3 = 0;
 TRISBbits.TRISB1 = 1;
-PORTDbits.RD2 = 0;
-PORTDbits.RD3 = 0;
+
 
 BRGH = 0;
 SPBRG = 25;
@@ -1865,11 +1895,11 @@ GIE = 1;
 RX9 = 0;
 CREN = 1;
 
-TXSTA = 0X24;
 
+RCIF = 0;
 INTF = 0;
-PORTEbits.RE1 =0 ;
-PORTEbits.RE0 =0;
 
+while(1){
+}
 return;
 }
