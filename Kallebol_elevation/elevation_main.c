@@ -68,8 +68,10 @@ int16_t goto_pos = 0;
 uint16_t recived_data = 0;
 uint8_t input_command = 0;
 
-uint8_t wait_for_UART_data = 0; //If this flag is high the MCU waits for another UART package 
+uint8_t wait_for_UART_data = 0; 
+//this flag indicates what state the 16-bit data reception machine is in
 uint8_t awaiting_command = 1;
+uint8_t awaiting_second_byte = 0; //Used in UART to recive 16bit data package
 uint8_t homing = 0; //If this flag is high, the machine will home and set the zero position.
 
 //Using latch registers as recomended by XC8 manual 3.7.4
@@ -119,18 +121,21 @@ void check_target(){
 }
 
 void trans(uint8_t a){
-    while(!TRMT){
-        TXREG=a;
-    }
+
+    while(TRMT == 0){ //Ensure data is ready to be loaded
+    } 
+    TXREG=a;
+
 }
 
 void update_machinestate(){
-    
+   
     
     if(awaiting_command == 0 && wait_for_UART_data == 0){
         //If a full command has been recived
         
         if(input_command == 0b10000100){ // command to move to a absolute position
+            bitset(PORTE_latch,0);
             goto_pos = recived_data;
         } else if(input_command == 0b10000011){ // command to set the current position
             position = recived_data;  
@@ -142,7 +147,9 @@ void update_machinestate(){
     
     if(input_command && awaiting_command){
         //If a new command byte has been recived
-        trans(input_command);
+        
+        //trans(input_command); //For some reason the TX wont work,
+        //The MCU hangs when loading data into TXREG
         
         if(input_command & 0b10000000){
             //If the recived command requires additional data to execute
@@ -158,40 +165,43 @@ void update_machinestate(){
             homing = 0;
                 
         } else if(input_command == 0b00000110) { //Command to turn on LED1, useful for debug
-            //LED1 = 1;
-            //PORTE |= 0b00000010;
             bitset(PORTE_latch,1);
 
         } else if(input_command == 0b00000101) { //Command to turn off LED1, useful for debug
-            //LED1 = 0;
-            //PORTE &= 0b11111101;
             bitclr(PORTE_latch,1);
         }else{
-            //Invalid command
-            //LED2 = 1; 
-            //PORTE |= 0b00000001;
-            bitset(PORTE_latch,0);
+            //Invalid command, Set status LED
+            //bitset(PORTE_latch,0);
             return;
         }
     }
-    //LED2 = 0;
-    //PORTE &= 0b11111110;
-    bitclr(PORTE_latch,0);
+   // bitclr(PORTE_latch,0);
+   
 }
 void uart_rec(){
+    
+    if(RCSTAbits.OERR){ 
+        CREN = 0;
+        NOP();
+        CREN=1;
+    }
+    
     if(awaiting_command){
         input_command = RCREG;
     
     } else if(!awaiting_command){
+        
        
-        if(wait_for_UART_data & recived_data){
+        if(wait_for_UART_data == 2){
             ///If it is now waiting for the last byte in the UART data 
-            recived_data = (uint8_t) (RCREG << 8);
+            recived_data |=(RCREG << 8);
             wait_for_UART_data = 0;
             
-        } else if(wait_for_UART_data & !recived_data) {
+        } else if(wait_for_UART_data == 1 & !recived_data) {
+            
              //If it is now waiting for the first byte in the UART data 
             recived_data = RCREG;
+            wait_for_UART_data = 2;
             
         }
     }
@@ -200,22 +210,21 @@ void uart_rec(){
     //Latching in ports
     PORTE = PORTE_latch; 
     PORTD = PORTD_latch;
-    input_command = 0;
+    if(awaiting_command){
+        input_command = 0;
+    }
 }
 
 
 void __interrupt() isr(void){
-    //LED2 = 1;
-    
+
     if (RCIF){ 
         RCIF = 0;
         uart_rec();
         RCREG = 0;
         
-        
     }
-    //LED2 = 0;
-    //LED1 = 1;
+
     if(INTF){
         INTF = 0;
         //__delay_ms(1);
@@ -227,18 +236,18 @@ void __interrupt() isr(void){
                   
     }
     check_target();
-    
-    //LED1 = 0;
 }
 
 
 void main(void) {
 
-    TRISA = 0xFF;   //set all digital I/O to inputs
+    TRISA = 0xFF;//set all digital I/O to inputs
     TRISB = 0xFF;
-    //TRISC = 0xFF;
-    TRISC = 0X80; //Enable RX/TX on the device
-
+    TRISC = 0xFF; 
+ 
+    TRISCbits.TRISC6 = 1; //RX pin input enable
+    TRISCbits.TRISC7 = 0; //TX pin output enable
+    
     LED1_TRIS = 0;      //LED1 is an output
     LED2_TRIS = 0;      //LED2 is an output
     PW1_TRIS = 0;       //Halfbridge powerpin 1
@@ -246,23 +255,32 @@ void main(void) {
     Encode_dir_TRIS = 1; //The flag for wich way the encoder is spinning
 
     
-    BRGH = 0;  // High-Speed Baud Rate
+    BRGH = 0;   // High-Speed Baud Rate
     SPBRG = 25; // Set The Baud Rate To Be 9615 baud (datasheet Table 10.4)
     
-    SYNC = 0; //Async mode
-    SPEN = 1; //Enable serialport on RC7 and RC6
-
-    INTEDG = 1;      //interrupt on the rising edge
+    SYNC = 0;   //Async mode
+    SPEN = 1;   //Enable serialport on RC7 and RC6
+    TXIE = 0;   // disallow tx interrupts
+    TXEN = 1;   //Enable TX
+    TX9 = 0;    //8-bit mode
+    RX9 = 0;    //8-bit mode
+    
+    
+    CREN = 1;   // Enable UART Data Reception
+    
+    INTEDG = 1;      //external interrupt on the rising edge
     INTE = 1;        //enable the external interrupt
     
-    RCIE = 1;  // UART Receving Interrupt Enable Bit
-    PEIE = 1;  // Peripherals Interrupt Enable Bit
-    GIE = 1;         //set the Global Interrupt Enable
-    RX9 = 0;
-    CREN = 1;  // Enable UART Data Reception
+    
+    RCIE = 1;   // UART Receving Interrupt Enable Bit
+    PEIE = 1;   // Peripherals Interrupt Enable Bit
+    GIE = 1;    //set the Global Interrupt Enable
+    
+    
     
     //TXSTA = 0X24; //Enable TX Async 8-bit mode   
     RCIF = 0;        //reset the UART interrupt flag
+    
     INTF = 0;        //reset the external interrupt flag
     
     while(1){ //Horrendus but for some reason main() kept executing

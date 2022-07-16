@@ -1703,7 +1703,9 @@ uint16_t recived_data = 0;
 uint8_t input_command = 0;
 
 uint8_t wait_for_UART_data = 0;
+
 uint8_t awaiting_command = 1;
+uint8_t awaiting_second_byte = 0;
 uint8_t homing = 0;
 
 
@@ -1753,9 +1755,11 @@ PORTD_latch &= 0b11111011;
 }
 
 void trans(uint8_t a){
-while(!TRMT){
-TXREG=a;
+
+while(TRMT == 0){
 }
+TXREG=a;
+
 }
 
 void update_machinestate(){
@@ -1765,6 +1769,7 @@ if(awaiting_command == 0 && wait_for_UART_data == 0){
 
 
 if(input_command == 0b10000100){
+((PORTE_latch) |= 1UL << (0));
 goto_pos = recived_data;
 } else if(input_command == 0b10000011){
 position = recived_data;
@@ -1776,8 +1781,7 @@ recived_data = 0;
 
 if(input_command && awaiting_command){
 
-trans(input_command);
-
+# 154
 if(input_command & 0b10000000){
 
 awaiting_command = 0;
@@ -1792,40 +1796,43 @@ homing = 1;
 homing = 0;
 
 } else if(input_command == 0b00000110) {
-
-
 ((PORTE_latch) |= 1UL << (1));
 
 } else if(input_command == 0b00000101) {
-
-
 ((PORTE_latch) &= ~(1UL << (1)));
 }else{
 
 
-
-((PORTE_latch) |= 1UL << (0));
 return;
 }
 }
 
 
-((PORTE_latch) &= ~(1UL << (0)));
 }
 void uart_rec(){
+
+if(RCSTAbits.OERR){
+CREN = 0;
+__nop();
+CREN=1;
+}
+
 if(awaiting_command){
 input_command = RCREG;
 
 } else if(!awaiting_command){
 
-if(wait_for_UART_data & recived_data){
 
-recived_data = (uint8_t) (RCREG << 8);
+if(wait_for_UART_data == 2){
+
+recived_data |=(RCREG << 8);
 wait_for_UART_data = 0;
 
-} else if(wait_for_UART_data & !recived_data) {
+} else if(wait_for_UART_data == 1 & !recived_data) {
+
 
 recived_data = RCREG;
+wait_for_UART_data = 2;
 
 }
 }
@@ -1834,21 +1841,20 @@ update_machinestate();
 
 PORTE = PORTE_latch;
 PORTD = PORTD_latch;
+if(awaiting_command){
 input_command = 0;
+}
 }
 
 
 void __interrupt() isr(void){
-
 
 if (RCIF){
 RCIF = 0;
 uart_rec();
 RCREG = 0;
 
-
 }
-
 
 if(INTF){
 INTF = 0;
@@ -1861,8 +1867,6 @@ position--;
 
 }
 check_target();
-
-
 }
 
 
@@ -1870,8 +1874,10 @@ void main(void) {
 
 TRISA = 0xFF;
 TRISB = 0xFF;
+TRISC = 0xFF;
 
-TRISC = 0X80;
+TRISCbits.TRISC6 = 1;
+TRISCbits.TRISC7 = 0;
 
 TRISEbits.TRISE1 = 0;
 TRISEbits.TRISE0 = 0;
@@ -1885,18 +1891,27 @@ SPBRG = 25;
 
 SYNC = 0;
 SPEN = 1;
+TXIE = 0;
+TXEN = 1;
+TX9 = 0;
+RX9 = 0;
+
+
+CREN = 1;
 
 INTEDG = 1;
 INTE = 1;
 
+
 RCIE = 1;
 PEIE = 1;
 GIE = 1;
-RX9 = 0;
-CREN = 1;
+
+
 
 
 RCIF = 0;
+
 INTF = 0;
 
 while(1){
