@@ -1697,10 +1697,11 @@ extern __bank0 __bit __timeout;
 #pragma config WRT = OFF
 
 int16_t position = 0;
-int16_t deadspace = 10;
+int16_t deadspace = 2;
 int16_t goto_pos = 0;
 uint16_t recived_data = 0;
 uint8_t input_command = 0;
+int8_t move_dir = 0;
 
 uint8_t wait_for_UART_data = 0;
 
@@ -1716,41 +1717,65 @@ uint8_t PORTD_latch =0x00;
 
 void check_target(){
 
+
 if(!homing){
-if(position > goto_pos){
+((PORTE_latch) &= ~(1UL << (0)));
+if((position - deadspace) > goto_pos){
+move_dir = -1;
 
-
-PORTD_latch &= 0b11111011;
-PORTD_latch |= 0b00001000;
-
-}else if(position < goto_pos){
-
-
-PORTD_latch |= 0b00000100;
-PORTD_latch &= 0b11110111;
+}else if((position + deadspace) < goto_pos){
+move_dir = 1;
 
 }else{
-PORTD_latch &= 0b11110011;
-
-
+move_dir = 0;
 }
-}else{
 
-PORTD_latch &= 0b11111011;
-PORTD_latch |= 0b00001000;
+}else{
+((PORTE_latch) |= 1UL << (0));
+move_dir = -1;
 }
 
 
-if(PORTDbits.RD1){
-PORTD_latch &= 0b11110111;
 
+
+if((! PORTDbits.RD1 ) && move_dir == -1){
+move_dir = 0;
 position = 0;
 homing = 0;
 }
 
-if(PORTDbits.RD0){
-PORTD_latch &= 0b11111011;
+if((! PORTDbits.RD0) && move_dir == 1){
+move_dir = 0;
+}
 
+
+
+if(move_dir == 1){
+((PORTD_latch) |= 1UL << (2));
+((PORTD_latch) &= ~(1UL << (3)));
+
+((PORTE_latch) |= 1UL << (0));
+
+
+
+
+}else if(move_dir == -1){
+
+
+
+((PORTD_latch) |= 1UL << (3));
+((PORTD_latch) &= ~(1UL << (2)));
+
+((PORTE_latch) |= 1UL << (1));
+
+}else{
+
+
+((PORTD_latch) &= ~(1UL << (2)));
+((PORTD_latch) &= ~(1UL << (3)));
+
+((PORTE_latch) &= ~(1UL << (1)));
+((PORTE_latch) &= ~(1UL << (0)));
 }
 }
 
@@ -1782,7 +1807,7 @@ input_command = 0;
 
 if(input_command && awaiting_command){
 
-# 155
+# 180
 if(input_command & 0b10000000){
 
 awaiting_command = 0;
@@ -1800,14 +1825,14 @@ homing = 0;
 ((PORTE_latch) |= 1UL << (1));
 
 } else if(input_command == 0b00000101) {
-((PORTE_latch) &= ~(1UL << (1)));
+
 }else{
 
-((PORTE_latch) |= 1UL << (0));
+
 return;
 }
 }
-((PORTE_latch) &= ~(1UL << (0)));
+
 
 }
 void uart_rec(){
@@ -1854,7 +1879,6 @@ if (RCIF){
 RCIF = 0;
 uart_rec();
 RCREG = 0;
-
 }
 
 if(INTF){

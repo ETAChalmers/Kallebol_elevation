@@ -63,10 +63,11 @@
 #pragma config WRT = OFF        // FLASH Program Memory Write Enable (Unprotected program memory may not be written to by EECON control)
 
 int16_t position = 0;
-int16_t deadspace = 10;
+int16_t deadspace = 2;
 int16_t goto_pos = 0;
 uint16_t recived_data = 0;
 uint8_t input_command = 0;
+int8_t move_dir = 0;            //0 for standstill, -1 retrac, +1 extend
 
 uint8_t wait_for_UART_data = 0; 
 //this flag indicates what state the 16-bit data reception machine is in
@@ -82,41 +83,65 @@ uint8_t PORTD_latch =0x00;
 
 void check_target(){
     
+    //### Normal poitioning stuff   
     if(!homing){
-        if(position > goto_pos){ //If position is greater than goto
-            //PW1 = 0;
-            //PW2 = 1;
-            PORTD_latch &= 0b11111011; //PD2/PW1 = 0
-            PORTD_latch |= 0b00001000; //PD3/PW2 = 1    
+        
+        if((position - deadspace) > goto_pos){ 
+            move_dir = -1; //retract
 
-        }else if(position < goto_pos){ //If position is 
-            //PW2 = 0;
-            //PW1 = 1;
-            PORTD_latch |= 0b00000100; //PD2/PW1 = 1
-            PORTD_latch &= 0b11110111; //PD3/PW2 = 0 
+        }else if((position + deadspace)  < goto_pos){
+            move_dir = 1; //extend
 
         }else{
-            PORTD_latch &= 0b11110011; //PD2&PD3 = 0
-            //Position reached
-
+            move_dir = 0;
         }
-    }else{  //if homing sequence is active
         
-        PORTD_latch &= 0b11111011; //PD2/PW1 = 0
-        PORTD_latch |= 0b00001000; //PD3/PW2 = 1    
+    }else{  //if homing sequence is active
+        bitset(PORTE_latch,0);
+        move_dir = -1;
     }
     
+    //### Saftey features
+    //Limit switches have a pullup, low == triggered
     
-    if(Home){
-        PORTD_latch &= 0b11110111; 
-        //ONLY disallow retraction as it is in an end state
+    if((! Home ) && move_dir == -1){
+        move_dir = 0;
         position = 0;
         homing = 0;
     }
     
-    if(Limit){
-        PORTD_latch &= 0b11111011; 
-        //ONLY disallow extention as it is in an end state
+    if((! Limit)  && move_dir == 1){
+        move_dir = 0; 
+    }
+    
+     //### Apply output depending on control state
+    
+    if(move_dir == 1){ //Extend
+        bitset(PORTD_latch,2);
+        bitclr(PORTD_latch,3);
+        
+        bitset(PORTE_latch,0);
+        
+        //PORTD_latch |= 0b00000100;  //PD2/PW1 = 1
+        //PORTD_latch &= 0b11110111;  //PD3/PW2 = 0
+    
+    }else if(move_dir == -1){ //retract
+        
+        //PORTD_latch &= 0b11111011;  //PD2/PW1 = 0
+        //PORTD_latch |= 0b00001000;  //PD3/PW2 = 1   
+        bitset(PORTD_latch,3);
+        bitclr(PORTD_latch,2);
+        
+        bitset(PORTE_latch,1);
+        
+    }else{
+        //PORTD_latch &= 0b11110011;  //PD2/PW1 = 0
+                                    //PD2/PW1 = 0
+        bitclr(PORTD_latch,2);
+        bitclr(PORTD_latch,3);
+        
+        bitclr(PORTE_latch,1);
+        bitclr(PORTE_latch,0);
     }
 }
 
@@ -169,14 +194,14 @@ void update_machinestate(){
             bitset(PORTE_latch,1);
 
         } else if(input_command == 0b00000101) { //Command to turn off LED1, useful for debug
-            bitclr(PORTE_latch,1);
+           // bitclr(PORTE_latch,1);
         }else{
             //Invalid command, Set status LED
-            bitset(PORTE_latch,0);
+           // bitset(PORTE_latch,0);
             return;
         }
     }
-    bitclr(PORTE_latch,0);
+    //bitclr(PORTE_latch,0);
    
 }
 void uart_rec(){
@@ -223,7 +248,6 @@ void __interrupt() isr(void){
         RCIF = 0;
         uart_rec();
         RCREG = 0;
-        
     }
 
     if(INTF){
