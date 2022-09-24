@@ -1715,6 +1715,10 @@ uint8_t PORTE_latch =0x00;
 uint8_t PORTD_latch =0x00;
 
 
+void latch_registers(){
+PORTE = PORTE_latch;
+PORTD = PORTD_latch;
+}
 
 void check_target(){
 
@@ -1795,7 +1799,7 @@ input_command = 0;
 
 if(input_command && awaiting_command){
 
-# 171
+# 175
 if(input_command & 0b10000000){
 
 awaiting_command = 0;
@@ -1837,7 +1841,6 @@ input_command = RCREG;
 
 } else if(!awaiting_command){
 
-
 if(wait_for_UART_data == 2){
 
 recived_data |= RCREG;
@@ -1871,7 +1874,22 @@ RCREG = 0;
 if(INTF){
 INTF = 0;
 }
-check_target();
+
+
+}
+
+void debug(){
+if(homing){
+((PORTE_latch) |= 1UL << (2));
+} else {
+((PORTE_latch) &= ~(1UL << (2)));
+}
+
+if(move_dir == 1){
+((PORTE_latch) |= 1UL << (0));
+}else{
+((PORTE_latch) &= ~(1UL << (0)));
+}
 
 }
 
@@ -1886,9 +1904,14 @@ TRISCbits.TRISC7 = 0;
 
 TRISEbits.TRISE1 = 0;
 TRISEbits.TRISE0 = 0;
+TRISEbits.TRISE2 = 0;
 TRISDbits.TRISD2 = 0;
 TRISDbits.TRISD3 = 0;
 TRISBbits.TRISB1 = 1;
+
+
+((PORTE_latch) |= 1UL << (0));
+PORTE = PORTE_latch;
 
 
 BRGH = 0;
@@ -1920,43 +1943,34 @@ RCIF = 0;
 INTF = 0;
 last_enc_value = 0;
 
+
 while(1){
-if(PORTBbits.RB0 && last_enc_value == 0){
+((PORTE_latch) |= 1UL << (2));
+if(PORTBbits.RB0 == 0 && last_enc_value == 0){
 
 
 last_enc_value = 1;
 
-_delay((unsigned long)((1)*(16000000/4000.0)));
+_delay((unsigned long)((2)*(16000000/4000.0)));
 
 if(PORTBbits.RB1){
-position++;
-check_target();
-
-}else{
 position--;
-check_target();
-
+}else{
+position++;
+}
 }
 
-
-}
-
-if(PORTBbits.RB0 == 0 && last_enc_value){
+if(PORTBbits.RB0 == 1 && last_enc_value){
 last_enc_value = 0;
-_delay((unsigned long)((1)*(16000000/4000.0)));
+_delay((unsigned long)((2)*(16000000/4000.0)));
 }
+
 check_target();
 
-_delay((unsigned long)((500)*(16000000/4000.0)));
+((PORTE_latch) |= 1UL << (2));
+debug();
 
-((PORTE_latch) &= ~(1UL << (1)));
-PORTE = PORTE_latch;
-
-_delay((unsigned long)((500)*(16000000/4000.0)));
-
-((PORTE_latch) |= 1UL << (1));
-PORTE = PORTE_latch;
+latch_registers();
 }
-
 return;
 }

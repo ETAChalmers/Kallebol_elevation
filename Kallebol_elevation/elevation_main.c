@@ -34,11 +34,11 @@
 
 #define _XTAL_FREQ 16000000 // 16'000'000Hz
 
-#define LED1                PORTEbits.RE1 //Hardware designation = D3 on pin 10
+#define LED1                1//PORTEbits.RE1 //Blue
 #define LED1_TRIS           TRISEbits.TRISE1
-#define LED2                PORTEbits.RE0 //Hardware designation = D1 on pin 9
+#define LED2                0//PORTEbits.RE0 //Red
 #define LED2_TRIS           TRISEbits.TRISE0
-#define LED3                PORTEbits.RE2 //Hardware design0ation = D1 on pin 9
+#define LED3                2//PORTEbits.RE2 //Yellow
 #define LED3_TRIS           TRISEbits.TRISE2
 
 #define Limit               PORTDbits.RD0
@@ -84,6 +84,10 @@ uint8_t PORTE_latch =0x00;
 uint8_t PORTD_latch =0x00;
 //uint8_t PORTB_latch =0x00;
 
+void latch_registers(){
+    PORTE = PORTE_latch;
+    PORTD = PORTD_latch;
+}
 
 void check_target(){
     
@@ -182,13 +186,13 @@ void update_machinestate(){
             homing = 0;
                 
         } else if(input_command == 0b00000110) { //Command to turn on LED1, useful for debug
-            //bitset(PORTE_latch,1);
+            //bitset(PORTE_latch,LED1);
 
         } else if(input_command == 0b00000101) { //Command to turn off LED1, useful for debug
-           // bitclr(PORTE_latch,1);
+           // bitclr(PORTE_latch,LED1);
         }else{
             //Invalid command, Set status LED
-           // bitset(PORTE_latch,0);
+           // bitset(PORTE_latch,LED2);
             return;
         }
     }
@@ -207,8 +211,7 @@ void uart_rec(){
     if(awaiting_command){
         input_command = RCREG;
     
-    } else if(!awaiting_command){
-        
+    } else if(!awaiting_command){  
        
         if(wait_for_UART_data == 2){
             ///If it is now waiting for the last byte in the UART data 
@@ -243,8 +246,23 @@ void __interrupt() isr(void){
     if(INTF){   
         INTF = 0;         
     }
-    check_target();
+    //check_target();
 
+}
+
+void debug(){
+    if(homing){
+        bitset(PORTE_latch,LED3);
+    } else {
+        bitclr(PORTE_latch,LED3);
+    }
+    
+    if(move_dir == 1){
+         bitset(PORTE_latch,LED2);
+    }else{
+        bitclr(PORTE_latch,LED2);
+    }
+    
 }
 
 void main(void) {
@@ -258,10 +276,15 @@ void main(void) {
     
     LED1_TRIS = 0;      //LED1 is an output
     LED2_TRIS = 0;      //LED2 is an output
+    LED3_TRIS = 0;      //LED3 is an output
     PW1_TRIS = 0;       //Halfbridge powerpin 1
     PW2_TRIS = 0;       //Halfbridge powerpin 2
     Encode_dir_TRIS = 1; //The flag for wich way the encoder is spinning
 
+        
+    bitset(PORTE_latch,LED2);
+    PORTE = PORTE_latch;
+    
     
     BRGH = 0;   // High-Speed Baud Rate
     SPBRG = 25; // Set The Baud Rate To Be 9615 baud (datasheet Table 10.4)
@@ -291,44 +314,35 @@ void main(void) {
     
     INTF = 0;        //reset the external interrupt flag
     last_enc_value = 0;
+
     
-    while(1){ //Horrendus but for some reason the interup for the pin would not worl
-        if(Encode_Int_pin && last_enc_value == 0){
+    while(1){ //Horrendus but for some reason the interup for the pin would not work
+        bitset(PORTE_latch,LED3);
+        if(Encode_Int_pin == 0 && last_enc_value == 0){
             //Find Rising edge
-            
+        
             last_enc_value = 1;
             
-            __delay_ms(1);//Debounce
+            __delay_ms(2);//Debounce
             
             if(Encode_dir){
-                position++;
-                check_target();
-
-            }else{
                 position--;
-                check_target();
-
+            }else{
+                position++;
             }
-            
-            
         }
         
-        if(Encode_Int_pin == 0 && last_enc_value){
+        if(Encode_Int_pin == 1 && last_enc_value){
             last_enc_value = 0;
-             __delay_ms(1);//Debounce
+            __delay_ms(2);//Debounce
         }
-    check_target();
-    
-    __delay_ms(500);
-    
-    bitclr(PORTE_latch,1);
-    PORTE = PORTE_latch;
-    
-    __delay_ms(500);
-    
-    bitset(PORTE_latch,1);
-    PORTE = PORTE_latch;
-    }   
-    
+        
+        check_target();
+
+        bitset(PORTE_latch,LED3);
+        debug();
+        
+        latch_registers();
+    }  
     return;
 }
