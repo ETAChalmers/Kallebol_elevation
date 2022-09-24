@@ -38,6 +38,8 @@
 #define LED1_TRIS           TRISEbits.TRISE1
 #define LED2                PORTEbits.RE0 //Hardware designation = D1 on pin 9
 #define LED2_TRIS           TRISEbits.TRISE0
+#define LED3                PORTEbits.RE2 //Hardware design0ation = D1 on pin 9
+#define LED3_TRIS           TRISEbits.TRISE2
 
 #define Limit               PORTDbits.RD0
 #define Home                PORTDbits.RD1
@@ -47,6 +49,7 @@
 #define PW2                 PORTDbits.RD3    //PW1=0,PW2=1   Extend
 #define PW2_TRIS            TRISDbits.TRISD3
 #define PW_port             PORTD
+#define Encode_Int_pin      PORTBbits.RB0
 #define Encode_dir          PORTBbits.RB1
 #define Encode_dir_TRIS     TRISBbits.TRISB1
 
@@ -68,6 +71,7 @@ int16_t goto_pos = 0;
 uint16_t recived_data = 0;
 uint8_t input_command = 0;
 int8_t move_dir = 0;            //0 for standstill, -1 retrac, +1 extend
+uint8_t last_enc_value = 0;
 
 uint8_t wait_for_UART_data = 0; 
 //this flag indicates what state the 16-bit data reception machine is in
@@ -97,7 +101,7 @@ void check_target(){
         }
         
     }else{  //if homing sequence is active
-        bitset(PORTE_latch,0);
+        
         move_dir = -1;
     }
     
@@ -119,29 +123,14 @@ void check_target(){
     if(move_dir == 1){ //Extend
         bitset(PORTD_latch,2);
         bitclr(PORTD_latch,3);
-        
-        bitset(PORTE_latch,0);
-        
-        //PORTD_latch |= 0b00000100;  //PD2/PW1 = 1
-        //PORTD_latch &= 0b11110111;  //PD3/PW2 = 0
-    
-    }else if(move_dir == -1){ //retract
-        
-        //PORTD_latch &= 0b11111011;  //PD2/PW1 = 0
-        //PORTD_latch |= 0b00001000;  //PD3/PW2 = 1   
+
+    }else if(move_dir == -1){ //retract  
         bitset(PORTD_latch,3);
         bitclr(PORTD_latch,2);
-        
-        bitset(PORTE_latch,1);
-        
+
     }else{
-        //PORTD_latch &= 0b11110011;  //PD2/PW1 = 0
-                                    //PD2/PW1 = 0
         bitclr(PORTD_latch,2);
         bitclr(PORTD_latch,3);
-        
-        bitclr(PORTE_latch,1);
-        bitclr(PORTE_latch,0);
     }
 }
 
@@ -154,6 +143,7 @@ void trans(uint8_t a){
 }
 
 void update_machinestate(){
+    //Updates state_machine state
    
     
     if(awaiting_command == 0 && wait_for_UART_data == 0){
@@ -168,6 +158,7 @@ void update_machinestate(){
         recived_data = 0;
         wait_for_UART_data = 0;
         input_command = 0;
+
     }
     
     
@@ -191,7 +182,7 @@ void update_machinestate(){
             homing = 0;
                 
         } else if(input_command == 0b00000110) { //Command to turn on LED1, useful for debug
-            bitset(PORTE_latch,1);
+            //bitset(PORTE_latch,1);
 
         } else if(input_command == 0b00000101) { //Command to turn off LED1, useful for debug
            // bitclr(PORTE_latch,1);
@@ -201,9 +192,10 @@ void update_machinestate(){
             return;
         }
     }
-    //bitclr(PORTE_latch,0);
+
    
 }
+
 void uart_rec(){
     
     if(RCSTAbits.OERR){ 
@@ -233,14 +225,11 @@ void uart_rec(){
     }
     //Update machinestate is at the end of this statement to allow for echo to propagate before changes
     update_machinestate();
-    //Latching in ports
-    PORTE = PORTE_latch; 
-    PORTD = PORTD_latch;
+
     if(awaiting_command){
         input_command = 0;
     }
 }
-
 
 void __interrupt() isr(void){
 
@@ -249,20 +238,14 @@ void __interrupt() isr(void){
         uart_rec();
         RCREG = 0;
     }
+    
 
-    if(INTF){
-        INTF = 0;
-        //__delay_ms(1);
-        if(Encode_dir){
-            position++;
-        }else{
-            position--;
-        }
-                  
+    if(INTF){   
+        INTF = 0;         
     }
     check_target();
-}
 
+}
 
 void main(void) {
 
@@ -285,8 +268,8 @@ void main(void) {
     
     SYNC = 0;   //Async mode
     SPEN = 1;   //Enable serialport on RC7 and RC6
-    TXIE = 0;   // disallow tx interrupts
-    TXEN = 1;   //Enable TX
+    // TXIE = 0;   // disallow tx interrupts
+    // TXEN = 0;   //Enable TX
     TX9 = 0;    //8-bit mode
     RX9 = 0;    //8-bit mode
     
@@ -294,7 +277,7 @@ void main(void) {
     CREN = 1;   // Enable UART Data Reception
     
     INTEDG = 1;      //external interrupt on the rising edge
-    INTE = 1;        //enable the external interrupt
+    //INTE = 1;        //enable the external interrupt
     
     
     RCIE = 1;   // UART Receving Interrupt Enable Bit
@@ -307,8 +290,45 @@ void main(void) {
     RCIF = 0;        //reset the UART interrupt flag
     
     INTF = 0;        //reset the external interrupt flag
+    last_enc_value = 0;
     
-    while(1){ //Horrendus but for some reason main() kept executing
-    }
+    while(1){ //Horrendus but for some reason the interup for the pin would not worl
+        if(Encode_Int_pin && last_enc_value == 0){
+            //Find Rising edge
+            
+            last_enc_value = 1;
+            
+            __delay_ms(1);//Debounce
+            
+            if(Encode_dir){
+                position++;
+                check_target();
+
+            }else{
+                position--;
+                check_target();
+
+            }
+            
+            
+        }
+        
+        if(Encode_Int_pin == 0 && last_enc_value){
+            last_enc_value = 0;
+             __delay_ms(1);//Debounce
+        }
+    check_target();
+    
+    __delay_ms(500);
+    
+    bitclr(PORTE_latch,1);
+    PORTE = PORTE_latch;
+    
+    __delay_ms(500);
+    
+    bitset(PORTE_latch,1);
+    PORTE = PORTE_latch;
+    }   
+    
     return;
 }

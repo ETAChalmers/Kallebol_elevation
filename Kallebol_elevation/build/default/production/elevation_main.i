@@ -1686,7 +1686,7 @@ extern __bank0 __bit __powerdown;
 extern __bank0 __bit __timeout;
 
 
-# 56 "elevation_main.c"
+# 59 "elevation_main.c"
 #pragma config FOSC = XT
 #pragma config WDTE = OFF
 #pragma config PWRTE = OFF
@@ -1702,6 +1702,7 @@ int16_t goto_pos = 0;
 uint16_t recived_data = 0;
 uint8_t input_command = 0;
 int8_t move_dir = 0;
+uint8_t last_enc_value = 0;
 
 uint8_t wait_for_UART_data = 0;
 
@@ -1719,7 +1720,7 @@ void check_target(){
 
 
 if(!homing){
-((PORTE_latch) &= ~(1UL << (0)));
+
 if((position - deadspace) > goto_pos){
 move_dir = -1;
 
@@ -1731,7 +1732,7 @@ move_dir = 0;
 }
 
 }else{
-((PORTE_latch) |= 1UL << (0));
+
 move_dir = -1;
 }
 
@@ -1754,28 +1755,13 @@ if(move_dir == 1){
 ((PORTD_latch) |= 1UL << (2));
 ((PORTD_latch) &= ~(1UL << (3)));
 
-((PORTE_latch) |= 1UL << (0));
-
-
-
-
 }else if(move_dir == -1){
-
-
-
 ((PORTD_latch) |= 1UL << (3));
 ((PORTD_latch) &= ~(1UL << (2)));
 
-((PORTE_latch) |= 1UL << (1));
-
 }else{
-
-
 ((PORTD_latch) &= ~(1UL << (2)));
 ((PORTD_latch) &= ~(1UL << (3)));
-
-((PORTE_latch) &= ~(1UL << (1)));
-((PORTE_latch) &= ~(1UL << (0)));
 }
 }
 
@@ -1790,6 +1776,7 @@ TXREG=a;
 void update_machinestate(){
 
 
+
 if(awaiting_command == 0 && wait_for_UART_data == 0){
 
 
@@ -1802,12 +1789,13 @@ awaiting_command = 1;
 recived_data = 0;
 wait_for_UART_data = 0;
 input_command = 0;
+
 }
 
 
 if(input_command && awaiting_command){
 
-# 180
+# 171
 if(input_command & 0b10000000){
 
 awaiting_command = 0;
@@ -1822,7 +1810,7 @@ homing = 1;
 homing = 0;
 
 } else if(input_command == 0b00000110) {
-((PORTE_latch) |= 1UL << (1));
+
 
 } else if(input_command == 0b00000101) {
 
@@ -1835,6 +1823,7 @@ return;
 
 
 }
+
 void uart_rec(){
 
 if(RCSTAbits.OERR){
@@ -1865,13 +1854,10 @@ wait_for_UART_data = 2;
 
 update_machinestate();
 
-PORTE = PORTE_latch;
-PORTD = PORTD_latch;
 if(awaiting_command){
 input_command = 0;
 }
 }
-
 
 void __interrupt() isr(void){
 
@@ -1881,19 +1867,13 @@ uart_rec();
 RCREG = 0;
 }
 
+
 if(INTF){
 INTF = 0;
-
-if(PORTBbits.RB1){
-position++;
-}else{
-position--;
-}
-
 }
 check_target();
-}
 
+}
 
 void main(void) {
 
@@ -1916,8 +1896,8 @@ SPBRG = 25;
 
 SYNC = 0;
 SPEN = 1;
-TXIE = 0;
-TXEN = 1;
+
+
 TX9 = 0;
 RX9 = 0;
 
@@ -1925,7 +1905,7 @@ RX9 = 0;
 CREN = 1;
 
 INTEDG = 1;
-INTE = 1;
+
 
 
 RCIE = 1;
@@ -1938,8 +1918,45 @@ GIE = 1;
 RCIF = 0;
 
 INTF = 0;
+last_enc_value = 0;
 
 while(1){
+if(PORTBbits.RB0 && last_enc_value == 0){
+
+
+last_enc_value = 1;
+
+_delay((unsigned long)((1)*(16000000/4000.0)));
+
+if(PORTBbits.RB1){
+position++;
+check_target();
+
+}else{
+position--;
+check_target();
+
 }
+
+
+}
+
+if(PORTBbits.RB0 == 0 && last_enc_value){
+last_enc_value = 0;
+_delay((unsigned long)((1)*(16000000/4000.0)));
+}
+check_target();
+
+_delay((unsigned long)((500)*(16000000/4000.0)));
+
+((PORTE_latch) &= ~(1UL << (1)));
+PORTE = PORTE_latch;
+
+_delay((unsigned long)((500)*(16000000/4000.0)));
+
+((PORTE_latch) |= 1UL << (1));
+PORTE = PORTE_latch;
+}
+
 return;
 }
