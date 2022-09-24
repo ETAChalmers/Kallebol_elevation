@@ -1747,6 +1747,8 @@ if((! PORTDbits.RD1 ) && move_dir == -1){
 move_dir = 0;
 position = 0;
 homing = 0;
+goto_pos = 0;
+
 }
 
 if((! PORTDbits.RD0) && move_dir == 1){
@@ -1798,8 +1800,9 @@ input_command = 0;
 
 
 if(input_command && awaiting_command){
+((PORTE_latch) &= ~(1UL << (0)));
 
-# 175
+# 178
 if(input_command & 0b10000000){
 
 awaiting_command = 0;
@@ -1814,13 +1817,13 @@ homing = 1;
 homing = 0;
 
 } else if(input_command == 0b00000110) {
-
+((PORTE_latch) |= 1UL << (1));
 
 } else if(input_command == 0b00000101) {
-
+((PORTE_latch) &= ~(1UL << (1)));
 }else{
 
-
+((PORTE_latch) |= 1UL << (0));
 return;
 }
 }
@@ -1945,7 +1948,7 @@ last_enc_value = 0;
 
 
 while(1){
-((PORTE_latch) |= 1UL << (2));
+
 if(PORTBbits.RB0 == 0 && last_enc_value == 0){
 
 
@@ -1967,8 +1970,14 @@ _delay((unsigned long)((2)*(16000000/4000.0)));
 
 check_target();
 
+
+
+
+if(homing){
 ((PORTE_latch) |= 1UL << (2));
-debug();
+} else {
+((PORTE_latch) &= ~(1UL << (2)));
+}
 
 latch_registers();
 }

@@ -112,10 +112,12 @@ void check_target(){
     //### Saftey features
     //Limit switches have a pullup, low == triggered
     
-    if((! Home ) && move_dir == -1){
+    if((! Home ) && move_dir == -1){ //Homing switch was hit
         move_dir = 0;
         position = 0;
         homing = 0;
+        goto_pos = 0;
+        
     }
     
     if((! Limit)  && move_dir == 1){
@@ -167,6 +169,7 @@ void update_machinestate(){
     
     
     if(input_command && awaiting_command){
+        bitclr(PORTE_latch,LED2);
         //If a new command byte has been recived
         
         //trans(input_command); //For some reason the TX wont work,
@@ -186,13 +189,13 @@ void update_machinestate(){
             homing = 0;
                 
         } else if(input_command == 0b00000110) { //Command to turn on LED1, useful for debug
-            //bitset(PORTE_latch,LED1);
+            bitset(PORTE_latch,LED1);
 
         } else if(input_command == 0b00000101) { //Command to turn off LED1, useful for debug
-           // bitclr(PORTE_latch,LED1);
+            bitclr(PORTE_latch,LED1);
         }else{
             //Invalid command, Set status LED
-           // bitset(PORTE_latch,LED2);
+            bitset(PORTE_latch,LED2);
             return;
         }
     }
@@ -258,7 +261,7 @@ void debug(){
     }
     
     if(move_dir == 1){
-         bitset(PORTE_latch,LED2);
+        bitset(PORTE_latch,LED2);
     }else{
         bitclr(PORTE_latch,LED2);
     }
@@ -317,7 +320,7 @@ void main(void) {
 
     
     while(1){ //Horrendus but for some reason the interup for the pin would not work
-        bitset(PORTE_latch,LED3);
+        
         if(Encode_Int_pin == 0 && last_enc_value == 0){
             //Find Rising edge
         
@@ -339,8 +342,14 @@ void main(void) {
         
         check_target();
 
-        bitset(PORTE_latch,LED3);
-        debug();
+        
+        //debug();
+        
+        if(homing){
+            bitset(PORTE_latch,LED3);
+        } else {
+            bitclr(PORTE_latch,LED3);
+        }
         
         latch_registers();
     }  
