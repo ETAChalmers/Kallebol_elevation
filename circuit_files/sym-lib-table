@@ -1,4 +1,3 @@
 (sym_lib_table
-  (lib (name PIC)(type Legacy)(uri "Z:/users/David/David Kicad libs/PIC.lib")(options "")(descr ""))
-  (lib (name Kallebol_elevation-rescue)(type Legacy)(uri ${KIPRJMOD}/Kallebol_elevation-rescue.lib)(options "")(descr ""))
+  (lib (name "MCU_RaspberryPi_and_Boards")(type "KiCad")(uri "${KIPRJMOD}/KiCad-RP-Pico-main/KiCad-RP-Pico-main/RP-Pico Libraries/MCU_RaspberryPi_and_Boards.kicad_sym")(options "")(descr ""))
 )
