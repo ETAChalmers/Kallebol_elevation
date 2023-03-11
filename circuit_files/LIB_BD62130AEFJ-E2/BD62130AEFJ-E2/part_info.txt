@@ -1,0 +1,9 @@
+Manufacturer=ROHM Semiconductor
+PartNumber=BD62130AEFJ-E2
+PartCategory=Integrated Circuit
+PackageCategory=Small Outline Packages
+PinCount=9
+Version=1.1
+Released=2020-01-29 06:57:37
+Downloaded=2023-03-11 11:48:16
+3D=Y
