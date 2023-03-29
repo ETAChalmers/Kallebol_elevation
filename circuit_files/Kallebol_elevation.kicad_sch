@@ -3710,36 +3710,6 @@
     )
   )
 
-  (symbol (lib_id "power:+3V3") (at 241.935 79.375 0) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
-    (uuid 55b8b1de-6c27-4634-bda2-4405513c3c98)
-    (property "Reference" "#PWR037" (at 241.935 83.185 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Value" "+3V3" (at 241.935 75.7992 0)
-      (effects (font (size 1.27 1.27)))
-    )
-    (property "Footprint" "" (at 241.935 79.375 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Datasheet" "" (at 241.935 79.375 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (pin "1" (uuid e1f10f6c-108d-48b0-bcfb-d431a0475176))
-    (instances
-      (project "Kallebol_elevation"
-        (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
-          (reference "#PWR037") (unit 1)
-        )
-      )
-      (project "Kallebol_GPIO_fanout"
-        (path "/f263f1e0-afed-421c-96dc-2cc7b196a4ea"
-          (reference "#PWR0124") (unit 1)
-        )
-      )
-    )
-  )
-
   (symbol (lib_id "Device:C_Polarized_Small") (at 27.94 162.56 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 5ddda566-75c3-4f1b-930c-91cd26efbbfb)
@@ -4014,19 +3984,19 @@
     )
   )
 
-  (symbol (lib_id "power:+5V") (at 254.635 79.375 0) (unit 1)
+  (symbol (lib_id "power:+5V") (at 248.285 83.185 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 7b28710a-8544-47a1-be88-8d25dbe9a2ea)
-    (property "Reference" "#PWR038" (at 254.635 83.185 0)
+    (property "Reference" "#PWR038" (at 248.285 86.995 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (property "Value" "+5V" (at 254.635 75.7992 0)
+    (property "Value" "+5V" (at 248.285 79.6092 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "" (at 254.635 79.375 0)
+    (property "Footprint" "" (at 248.285 83.185 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (property "Datasheet" "" (at 254.635 79.375 0)
+    (property "Datasheet" "" (at 248.285 83.185 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (pin "1" (uuid fd3462c0-cce9-4a1b-8cb3-b217e3ca8f7a))
@@ -4195,36 +4165,6 @@
     )
   )
 
-  (symbol (lib_id "power:+5V") (at 110.49 109.22 0) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
-    (uuid 87aee63d-e46b-4599-afb6-f5c82290eb28)
-    (property "Reference" "#PWR034" (at 110.49 113.03 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Value" "+5V" (at 110.49 105.6442 0)
-      (effects (font (size 1.27 1.27)))
-    )
-    (property "Footprint" "" (at 110.49 109.22 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Datasheet" "" (at 110.49 109.22 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (pin "1" (uuid 7013fcfa-295f-491c-8785-5b69ea22ffe0))
-    (instances
-      (project "Kallebol_elevation"
-        (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
-          (reference "#PWR034") (unit 1)
-        )
-      )
-      (project "Kallebol_GPIO_fanout"
-        (path "/f263f1e0-afed-421c-96dc-2cc7b196a4ea"
-          (reference "#PWR0111") (unit 1)
-        )
-      )
-    )
-  )
-
   (symbol (lib_id "power:GND") (at 145.415 124.46 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 91fe263c-c15e-44b5-9d22-fe3a8935d13b)
@@ -4245,6 +4185,31 @@
       (project "Kallebol_elevation"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR0106") (unit 1)
+        )
+      )
+    )
+  )
+
+  (symbol (lib_id "power:+12V") (at 110.49 109.22 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid 92268b2d-3c02-49ee-bc91-a1847ed965eb)
+    (property "Reference" "#PWR034" (at 110.49 113.03 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Value" "+12V" (at 110.871 104.8258 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Footprint" "" (at 110.49 109.22 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "" (at 110.49 109.22 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (pin "1" (uuid e3bec939-3ee9-42f7-af8a-578ec491d116))
+    (instances
+      (project "Kallebol_elevation"
+        (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
+          (reference "#PWR034") (unit 1)
         )
       )
     )
@@ -5547,38 +5512,6 @@
       (project "Kallebol_GPIO_fanout"
         (path "/f263f1e0-afed-421c-96dc-2cc7b196a4ea"
           (reference "Q1") (unit 1)
-        )
-      )
-    )
-  )
-
-  (symbol (lib_id "Jumper:Jumper_3_Bridged12") (at 248.285 79.375 0) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
-    (uuid f9e20c7d-e04a-4355-92d8-b8c954b5970a)
-    (property "Reference" "JP2" (at 248.285 75.5009 0)
-      (effects (font (size 1.27 1.27)))
-    )
-    (property "Value" "Jumper_3" (at 248.285 77.4219 0)
-      (effects (font (size 1.27 1.27)))
-    )
-    (property "Footprint" "Connector_PinSocket_2.54mm:PinSocket_1x03_P2.54mm_Vertical" (at 248.285 79.375 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Datasheet" "~" (at 248.285 79.375 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (pin "1" (uuid e2f72f62-e3dc-4092-9049-c803d288c5de))
-    (pin "2" (uuid 064a8d35-712e-4551-a3a3-9258082ed4db))
-    (pin "3" (uuid 0bea7ea4-ad3c-4a36-8463-45c51f9da0f9))
-    (instances
-      (project "Kallebol_elevation"
-        (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
-          (reference "JP2") (unit 1)
-        )
-      )
-      (project "Kallebol_GPIO_fanout"
-        (path "/f263f1e0-afed-421c-96dc-2cc7b196a4ea"
-          (reference "JP1") (unit 1)
         )
       )
     )
