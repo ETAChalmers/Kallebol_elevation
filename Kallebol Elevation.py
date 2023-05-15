@@ -10,8 +10,8 @@ PCB2_LED = Pin(12, Pin.OUT)
 PCB3_LED = Pin(13, Pin.OUT)
 LOAD1_pin = Pin(8, Pin.OUT)
 LOAD2_pin = Pin(9, Pin.OUT)
-ENC_A = Pin(6,Pin.IN)
-ENC_B = Pin(7,Pin.IN)
+ENC_A = Pin(6,Pin.IN,Pin.PULL_DOWN)
+ENC_B = Pin(7,Pin.IN,Pin.PULL_DOWN)
 
 Homing_pin = Pin(15,Pin.IN)
 Limit_pin = Pin(14,Pin.IN)
@@ -37,20 +37,26 @@ movedir = 0 # 1 = extend, 0 = break, -1 retract
 setpoint_value = 0 #value from the master
 encoder_value = 0  #The current position of the motor
 
-def Encoder_callback():
-    if ENC_B:
+def Encoder_callback(args):
+    global encoder_value
+    print(str(ENC_B.value()))
+    if ENC_B.value() == 1:
         encoder_value = encoder_value + 1
+        print("I increesed the counter to : " + str(encoder_value))
     else:
         encoder_value = encoder_value - 1
-    delay(10) #debounce
+        print("I DEcreesed the counter to : " + str(encoder_value))
+    time.sleep_ms(5) #debounce
         
-def homing_callback():
+def homing_callback(args):
+    global movedir
     if movedir == -1:
         movedir = 0
         update_H_bridge_state()
     encoder_value = 0
 
-def limit_callback():
+def limit_callback(args):
+    global movedir
     if movedir == 1:
         movedir = 0
         update_H_bridge_state()
