@@ -39,7 +39,6 @@ encoder_value = 0  #The current position of the motor
 
 def Encoder_callback(args):
     global encoder_value
-    print(str(ENC_B.value()))
     if ENC_B.value() == 1:
         encoder_value = encoder_value + 1
         print("I increesed the counter to : " + str(encoder_value))
@@ -118,20 +117,30 @@ def Elevation_command_handler(data):
         else:
             homeing = 0
     if (data[1] == "GOTO"):
-        print("to be implemeted")
+        try:
+            setpoint_value = int(data[2])
+        except Exception as e:
+            print(e)
+            print(data[3])
     if (data[1] == "SET"):
-        print("to be implemeted")
+        try:
+            encoder_value = int(data[2])
+        except Exception as e:
+            print(e)
     if (data[1] == "STOP"):
-        print("not fully functional")
         stop = 1
         if (data[2] == "RESET"):
             stop = 0
     if (data[1] == "GET"):
         if (data[2] == "POSITION"):
-            print(encoder_value)
+            print(str(encoder_value))
         if (data[2] == "TARGET"):
-            print(setpoint_value)
+            print(str(setpoint_value))
         if (data[2] == "FLAGS"):
+            print("Homeing : " + str(homeing) + " ,Movedir : " + str(movedir) + " ,Stop : " + str(stop))
+        if (data[2] ==  "ALL")
+            print("Current position = " + str(encoder_value))
+            print("Target position = " + str(setpoint_value))
             print("Homeing : " + str(homeing) + " ,Movedir : " + str(movedir) + " ,Stop : " + str(stop))
             
     
@@ -160,6 +169,7 @@ def command_interpreter(data):
     
         
 def update_H_bridge_state():
+    global stop
     if movedir == 1:
         H_bridge_1.value = 1
         H_bridge_2.value = 0
@@ -167,6 +177,9 @@ def update_H_bridge_state():
         H_bridge_1.value = 0
         H_bridge_2.value = 1
     else:
+        H_bridge_1.value = 0
+        H_bridge_2.value = 0
+    if stop == 1:
         H_bridge_1.value = 0
         H_bridge_2.value = 0
 
