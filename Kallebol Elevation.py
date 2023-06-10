@@ -52,12 +52,12 @@ def Encoder_callback(args):
 def homing_callback(args):
     global HW_stop
     encoder_value = 0
-    HW_stop = -1
+    update_stops()
     update_elevation_stage_direction()
 
 def limit_callback(args): # this should do something to ensure that it does not pass the limit
     global HW_stop
-    HW_stop = 1
+    update_stops()
     update_elevation_stage_direction()
         
 
@@ -237,14 +237,24 @@ def update_H_bridge_state():
         HWmovedir = 0
 
 def update_stops():
-    if Homing_pin.value() == 0 and HW_stop ==  -1:
+    global HW_stop
+    global stop
+    homing_pin_polarity = 0 #This state indicates that the switch is ACTIVE / has been reached / pressed down / in position
+    limit_pin_polarity  = 0  #This state indicates that the switch is ACTIVE / has been reached / pressed down / in position
+    
+    if (not Homing_pin.value() == homing_pin_polarity) and HW_stop ==  -1:
         HW_stop = 0
-    if Limit_pin.value() == 0 and HW_stop ==  1:
+    if (not Limit_pin.value() == homing_pin_polarity ) and HW_stop ==  1:
         HW_stop = 0
-    if Limit_pin.value() == 1:
+    if Limit_pin.value() == limit_pin_polarity:
         HW_stop = 1
-    if Homing_pin.value() == 1:
+    if Homing_pin.value() == homing_pin_polarity:
         HW_stop = -1
+    if Homing_pin.value() == homing_pin_polarity and Limit_pin.value() == limit_pin_polarity:
+        print("ERROR both limit switches appear to have triggered at the same time")
+        print("ERROR I have pulled the E-stop, please reset before resuming operation")
+        stop = 1
+        
 
 
 #enable IRQs
