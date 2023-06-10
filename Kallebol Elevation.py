@@ -31,6 +31,7 @@ poll_obj.register(sys.stdin, select.POLLIN)
 
 #Global values
 stop = 0 # a pseudo E-stop
+HW_stop = 0 # indicates that a hardware stop has been reached -1 homing switch, 1 limit switch
 homeing = 0
 movedir = 0 # 1 = extend, 0 = break, -1 retract
 setpoint_value = 0 #value from the master
@@ -49,13 +50,12 @@ def Encoder_callback(args):
         
 def homing_callback(args):  
     encoder_value = 0
-    update_elevation_stage_direcEVEion()
+    HW_stop = -1
+    update_elevation_stage_direction()
 
 def limit_callback(args): # this should do something to ensure that it does not pass the limit
     global movedir
-    if movedir == 1:
-        #This does nothing
-        movedir = 0
+    HW_stop = 1
     update_elevation_stage_direction()
         
 
@@ -111,6 +111,7 @@ def Elevation_command_handler(data):
     global homeing
     global encoder_value
     global setpoint_value
+    global HW_stop
     
     if (data[1] == "HOME"):
         if (data[2] == "START"):
@@ -138,11 +139,11 @@ def Elevation_command_handler(data):
         if (data[2] == "TARGET"):
             print(str(setpoint_value))
         if (data[2] == "FLAGS"):
-            print("Homeing : " + str(homeing) + " ,Movedir : " + str(movedir) + " ,Stop : " + str(stop))
+            print("Homeing : " + str(homeing) + " ,Movedir : " + str(movedir) + " ,Stop : " + str(stop) + " ,HW_stop : " + str(HW_stop))
         if (data[2] ==  "ALL"):
             print("Current position = " + str(encoder_value))
             print("Target position = " + str(setpoint_value))
-            print("Homeing : " + str(homeing) + " ,Movedir : " + str(movedir) + " ,Stop : " + str(stop))
+            print("Homeing : " + str(homeing) + " ,Movedir : " + str(movedir) + " ,Stop : " + str(stop) + " ,HW_stop : " + str(HW_stop))
             
     
         
@@ -152,7 +153,7 @@ def command_interpreter(data):
     splitdata = data.split()
     
     #Append data to the end to ensure array is atleast 3 elements
-    #yes, there probobly is a better way, but c'mon.. this needs to run at like 1Hz
+    #yes, there probably is a better way, but c'mon.. this needs to run at like 1Hz
     splitdata.append("")
     splitdata.append("")
     splitdata.append("")
@@ -167,25 +168,40 @@ def command_interpreter(data):
         Elevation_command_handler(splitdata)
     elif (splitdata[0] == "EXPANTION"):
         print("to be implemented")
+        
     update_elevation_stage_direction()
+    
+    
     
 def update_elevation_stage_direction():
     global stop
     global movedir
     global encoder_value
     global setpoint_value
+    global HW_stop
     
     if encoder_value > setpoint_value:
             movedir = 1
-    if encoder_value < setpoint_value:
+    elif encoder_value < setpoint_value:
             movedir = -1
+    else:
+            movedir = 0
+            
+    #Stopchecks
+    if stop == 1:
+        movedir = 0
+    if HW_stop == -1 and movedir == -1:
+        movedir = 0
+    if HW_stop ==  1 and movedir ==  1:
+        movedir = 0 
+            
     update_H_bridge_state()
+        
+        
         
 def update_H_bridge_state():
     global stop
     global movedir
-    global H_bridge_1
-    global H_bridge_2
     if movedir == 1:
         H_bridge_1.value(1)
         H_bridge_2.value(0)
@@ -202,6 +218,15 @@ def update_H_bridge_state():
         H_bridge_1.value(0)
         H_bridge_2.value(0)
 
+def update_stops():
+    if Homing_pin.value() == 0 and HW_stop ==  -1:
+        HW_stop = 0
+    if Limit_pin.value() == 0 and HW_stop ==  1:
+        HW_stop = 0
+    if Limit_pin.value() == 1:
+        HW_stop = 1
+    if Homing_pin.value() == 1:
+        HW_stop = -1
 
 
 #enable IRQs
