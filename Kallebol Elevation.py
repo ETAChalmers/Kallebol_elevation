@@ -34,6 +34,7 @@ stop = 0 # a pseudo E-stop
 HW_stop = 0 # indicates that a hardware stop has been reached -1 homing switch, 1 limit switch
 homeing = 0
 movedir = 0 # 1 = extend, 0 = break, -1 retract
+hardware_movedir = 0 # the movedir as commanded by the elevation controller, for debug purposes
 setpoint_value = 0 #value from the master
 encoder_value = 0  #The current position of the motor
 
@@ -48,13 +49,14 @@ def Encoder_callback(args):
     time.sleep_ms(1) #debounce
     update_elevation_stage_direction()
         
-def homing_callback(args):  
+def homing_callback(args):
+    global HW_stop
     encoder_value = 0
     HW_stop = -1
     update_elevation_stage_direction()
 
 def limit_callback(args): # this should do something to ensure that it does not pass the limit
-    global movedir
+    global HW_stop
     HW_stop = 1
     update_elevation_stage_direction()
         
@@ -112,6 +114,7 @@ def Elevation_command_handler(data):
     global encoder_value
     global setpoint_value
     global HW_stop
+    global HWmovedir
     
     if (data[1] == "HOME"):
         if (data[2] == "START"):
@@ -139,11 +142,11 @@ def Elevation_command_handler(data):
         if (data[2] == "TARGET"):
             print(str(setpoint_value))
         if (data[2] == "FLAGS"):
-            print("Homeing : " + str(homeing) + " ,Movedir : " + str(movedir) + " ,Stop : " + str(stop) + " ,HW_stop : " + str(HW_stop))
+            print("Homeing : " + str(homeing) + " ,Movedir : " + str(movedir) + " ,HWmovedir : " + str(hardware_movedir) + " ,Stop : " + str(stop) + " ,HW_stop : " + str(HW_stop))
         if (data[2] ==  "ALL"):
             print("Current position = " + str(encoder_value))
             print("Target position = " + str(setpoint_value))
-            print("Homeing : " + str(homeing) + " ,Movedir : " + str(movedir) + " ,Stop : " + str(stop) + " ,HW_stop : " + str(HW_stop))
+            print("Homeing : " + str(homeing) + " ,Movedir : " + str(movedir) + " ,HWmovedir : " + str(hardware_movedir) + " ,Stop : " + str(stop) + " ,HW_stop : " + str(HW_stop))
             
     
         
@@ -202,21 +205,26 @@ def update_elevation_stage_direction():
 def update_H_bridge_state():
     global stop
     global movedir
+    global HWmovedir
     if movedir == 1:
         H_bridge_1.value(1)
         H_bridge_2.value(0)
-        print("movedir 1")
+        HWmovedir = 1
+        
     elif movedir == -1:
         H_bridge_1.value(0)
         H_bridge_2.value(1)
-        print("movedir -1")
+        HWmovedir = -1
+        
     else:
         H_bridge_1.value(0)
         H_bridge_2.value(0)
-        print("movedir " + str(movedir))
+        HWmovedir = 0
+        
     if stop == 1:
         H_bridge_1.value(0)
         H_bridge_2.value(0)
+        HWmovedir = 0
 
 def update_stops():
     if Homing_pin.value() == 0 and HW_stop ==  -1:
@@ -235,6 +243,7 @@ Homing_pin.irq(trigger=Homing_pin.IRQ_FALLING, handler=homing_callback)
 Limit_pin.irq(trigger=Limit_pin.IRQ_FALLING, handler=limit_callback)
 #Infinite loop of the program    
 while True:
+    update_stops()
     poll_results = poll_obj.poll(10)
     if poll_results:
         data = sys.stdin.readline().strip()
