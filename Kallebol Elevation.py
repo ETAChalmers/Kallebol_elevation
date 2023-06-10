@@ -1,4 +1,3 @@
-#Source: Electrocredible.com, Language: MicroPython.
 from machine import Pin
 import select
 import sys
@@ -45,20 +44,20 @@ def Encoder_callback(args):
     else:
         encoder_value = encoder_value - 1
         print("I DEcreesed the counter to : " + str(encoder_value))
-    time.sleep_ms(5) #debounce
+    time.sleep_ms(1) #debounce
+    update_elevation_stage_direction()
         
-def homing_callback(args):
-    global movedir
-    if movedir == -1:
-        movedir = 0
-        update_H_bridge_state()
+def homing_callback(args):  
     encoder_value = 0
+    update_elevation_stage_direcEVEion()
 
-def limit_callback(args):
+def limit_callback(args): # this should do something to ensure that it does not pass the limit
     global movedir
     if movedir == 1:
+        #This does nothing
         movedir = 0
-        update_H_bridge_state()
+    update_elevation_stage_direction()
+        
 
 def LED_handler(data): #accepts splitdata
     #BEHOLD MY IF STATEMENTS!
@@ -110,6 +109,8 @@ def Elevation_command_handler(data):
     global stop
     global movedir
     global homeing
+    global encoder_value
+    global setpoint_value
     
     if (data[1] == "HOME"):
         if (data[2] == "START"):
@@ -138,7 +139,7 @@ def Elevation_command_handler(data):
             print(str(setpoint_value))
         if (data[2] == "FLAGS"):
             print("Homeing : " + str(homeing) + " ,Movedir : " + str(movedir) + " ,Stop : " + str(stop))
-        if (data[2] ==  "ALL")
+        if (data[2] ==  "ALL"):
             print("Current position = " + str(encoder_value))
             print("Target position = " + str(setpoint_value))
             print("Homeing : " + str(homeing) + " ,Movedir : " + str(movedir) + " ,Stop : " + str(stop))
@@ -166,22 +167,40 @@ def command_interpreter(data):
         Elevation_command_handler(splitdata)
     elif (splitdata[0] == "EXPANTION"):
         print("to be implemented")
+    update_elevation_stage_direction()
     
+def update_elevation_stage_direction():
+    global stop
+    global movedir
+    global encoder_value
+    global setpoint_value
+    
+    if encoder_value > setpoint_value:
+            movedir = 1
+    if encoder_value < setpoint_value:
+            movedir = -1
+    update_H_bridge_state()
         
 def update_H_bridge_state():
     global stop
+    global movedir
+    global H_bridge_1
+    global H_bridge_2
     if movedir == 1:
-        H_bridge_1.value = 1
-        H_bridge_2.value = 0
+        H_bridge_1.value(1)
+        H_bridge_2.value(0)
+        print("movedir 1")
     elif movedir == -1:
-        H_bridge_1.value = 0
-        H_bridge_2.value = 1
+        H_bridge_1.value(0)
+        H_bridge_2.value(1)
+        print("movedir -1")
     else:
-        H_bridge_1.value = 0
-        H_bridge_2.value = 0
+        H_bridge_1.value(0)
+        H_bridge_2.value(0)
+        print("movedir " + str(movedir))
     if stop == 1:
-        H_bridge_1.value = 0
-        H_bridge_2.value = 0
+        H_bridge_1.value(0)
+        H_bridge_2.value(0)
 
 
 
@@ -198,5 +217,6 @@ while True:
             print("received data: ", data)
             command_interpreter(data)
     
+
 
 
