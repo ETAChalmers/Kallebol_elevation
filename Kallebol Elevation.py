@@ -1,3 +1,5 @@
+#Welcome to Python hell
+#by yours truly, SA6DGJ
 from machine import Pin
 import select
 import sys
@@ -157,7 +159,7 @@ def Elevation_command_handler(data):
             print("LOAD1 : " + str(LOAD1_pin.value()) +  " ,LOAD2 : " + str(LOAD2_pin.value()) + " ,ENC_A : " + str(ENC_A.value()) + " ,ENC_B : " + str(ENC_B.value()))
             print("Homing_pin : " + str(Homing_pin.value())  + " ,Limit_pin : " + str(Limit_pin.value()))
             print("RF1_pin " + str(RF1_pin.value()) + " ,RF2_pin " + str(RF2_pin.value())+ " ,RF3_pin " + str(RF3_pin.value())+ " ,RF4_pin " + str(RF4_pin.value()))
-            print("Hbridge1 : " + str(H_bridge_1.value())  +  "Hbridge2 : " + str(H_bridge_2.value()))
+            print("Hbridge1 : " + str(H_bridge_1.value())  +  " Hbridge2 : " + str(H_bridge_2.value()))
     
         
     
@@ -239,7 +241,7 @@ def update_H_bridge_state():
 def update_stops():
     global HW_stop
     global stop
-    homing_pin_polarity = 0 #This state indicates that the switch is ACTIVE / has been reached / pressed down / in position
+    homing_pin_polarity = 0  #This state indicates that the switch is ACTIVE / has been reached / pressed down / in position
     limit_pin_polarity  = 0  #This state indicates that the switch is ACTIVE / has been reached / pressed down / in position
     
     if (not Homing_pin.value() == homing_pin_polarity) and HW_stop ==  -1:
