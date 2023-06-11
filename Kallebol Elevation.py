@@ -241,8 +241,8 @@ def update_H_bridge_state():
 def update_stops():
     global HW_stop
     global stop
-    homing_pin_polarity = 0  #This state indicates that the switch is ACTIVE / has been reached / pressed down / in position
-    limit_pin_polarity  = 0  #This state indicates that the switch is ACTIVE / has been reached / pressed down / in position
+    homing_pin_polarity = 1  #This state indicates that the switch is ACTIVE / has been reached / pressed down / in position
+    limit_pin_polarity  = 1  #This state indicates that the switch is ACTIVE / has been reached / pressed down / in position
     
     if (not Homing_pin.value() == homing_pin_polarity) and HW_stop ==  -1:
         HW_stop = 0
@@ -261,8 +261,8 @@ def update_stops():
 
 #enable IRQs
 ENC_A.irq(trigger=ENC_A.IRQ_FALLING, handler=Encoder_callback)
-Homing_pin.irq(trigger=Homing_pin.IRQ_FALLING, handler=homing_callback)
-Limit_pin.irq(trigger=Limit_pin.IRQ_FALLING, handler=limit_callback)
+Homing_pin.irq(trigger=Homing_pin.IRQ_RISING, handler=homing_callback)
+Limit_pin.irq(trigger=Limit_pin.IRQ_RISING, handler=limit_callback)
 #Infinite loop of the program    
 while True:
     update_stops()
