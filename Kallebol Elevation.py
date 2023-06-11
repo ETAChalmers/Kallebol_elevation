@@ -1,5 +1,6 @@
 #Welcome to Python hell
 #by yours truly, SA6DGJ
+#range of movement is 1117 pulses
 from machine import Pin
 import select
 import sys
@@ -56,13 +57,17 @@ def homing_callback(args):
     global HW_stop
     global encoder_value
     global homeing
+    global setpoint_value
+    print("homeswitch reached")
     encoder_value = 0
+    setpoint_value = 0
     homeing = 0
     update_stops()
     update_elevation_stage_direction()
 
 def limit_callback(args): # this should do something to ensure that it does not pass the limit
     global HW_stop
+    print("limit switch reached")
     update_stops()
     update_elevation_stage_direction()
         
@@ -183,7 +188,7 @@ def command_interpreter(data):
         LOAD_handler(splitdata)
     elif (splitdata[0] == "RFSWITCH"):
         print("to be implemented")
-    elif (splitdata[0] == "ELEVATION"):
+    elif (splitdata[0] == "ELEVATION" or plitdata[0] == "EL"):
         Elevation_command_handler(splitdata)
     elif (splitdata[0] == "EXPANTION"):
         print("to be implemented")
@@ -208,16 +213,16 @@ def update_elevation_stage_direction():
     else:
             movedir = 0
     #Homing mode
-    if homeing == 1
-        movedir = -1
+    if homeing == 1:
+        movedir = 1
     
         
     #Stopchecks
     if stop == 1:
         movedir = 0
-    if HW_stop == -1 and movedir == -1:
+    if HW_stop == -1 and movedir == 1:
         movedir = 0
-    if HW_stop ==  1 and movedir ==  1:
+    if HW_stop ==  1 and movedir ==  -1:
         movedir = 0 
             
     update_H_bridge_state()
@@ -275,7 +280,8 @@ def update_stops():
 ENC_A.irq(trigger=ENC_A.IRQ_FALLING, handler=Encoder_callback)
 Homing_pin.irq(trigger=Homing_pin.IRQ_RISING, handler=homing_callback)
 Limit_pin.irq(trigger=Limit_pin.IRQ_RISING, handler=limit_callback)
-#Infinite loop of the program    
+#Infinite loop of the program
+print("booted")
 while True:
     update_stops()
     poll_results = poll_obj.poll(10)
@@ -285,6 +291,7 @@ while True:
             print("received data: ", data)
             command_interpreter(data)
     
+
 
 
 
