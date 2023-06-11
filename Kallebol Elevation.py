@@ -40,6 +40,7 @@ hardware_movedir = 0 # the movedir as commanded by the elevation controller, for
 setpoint_value = 0 #value from the master
 encoder_value = 0  #The current position of the motor
 
+
 def Encoder_callback(args):
     global encoder_value
     if ENC_B.value() == 1:
@@ -53,7 +54,10 @@ def Encoder_callback(args):
         
 def homing_callback(args):
     global HW_stop
+    global encoder_value
+    global homeing
     encoder_value = 0
+    homeing = 0
     update_stops()
     update_elevation_stage_direction()
 
@@ -194,14 +198,20 @@ def update_elevation_stage_direction():
     global encoder_value
     global setpoint_value
     global HW_stop
-    
+    global homeing
+
+    #Default tracking mode
     if encoder_value > setpoint_value:
             movedir = 1
     elif encoder_value < setpoint_value:
             movedir = -1
     else:
             movedir = 0
-            
+    #Homing mode
+    if homeing == 1
+        movedir = -1
+    
+        
     #Stopchecks
     if stop == 1:
         movedir = 0
@@ -241,6 +251,7 @@ def update_H_bridge_state():
 def update_stops():
     global HW_stop
     global stop
+    global homeing
     homing_pin_polarity = 1  #This state indicates that the switch is ACTIVE / has been reached / pressed down / in position
     limit_pin_polarity  = 1  #This state indicates that the switch is ACTIVE / has been reached / pressed down / in position
     
@@ -251,12 +262,13 @@ def update_stops():
     if Limit_pin.value() == limit_pin_polarity:
         HW_stop = 1
     if Homing_pin.value() == homing_pin_polarity:
+        homeing = 0
         HW_stop = -1
     if Homing_pin.value() == homing_pin_polarity and Limit_pin.value() == limit_pin_polarity:
         print("ERROR both limit switches appear to have triggered at the same time")
         print("ERROR I have pulled the E-stop, please reset before resuming operation")
         stop = 1
-        
+
 
 
 #enable IRQs
