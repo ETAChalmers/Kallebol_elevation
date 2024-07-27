@@ -46,10 +46,10 @@ def Encoder_callback(args):
     global encoder_value
     if ENC_B.value() == 1:
         encoder_value = encoder_value + 1
-        print_custom("I increesed the counter to : " + str(encoder_value))
+        #print_custom("I increased the counter to : " + str(encoder_value))
     else:
         encoder_value = encoder_value - 1
-        print_custom("I DEcreesed the counter to : " + str(encoder_value))
+        #print_custom("I Decreased the counter to : " + str(encoder_value))
     time.sleep_ms(1) #debounce
     update_elevation_stage_direction()
         
