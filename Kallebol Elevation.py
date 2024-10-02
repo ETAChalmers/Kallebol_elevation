@@ -158,13 +158,14 @@ def Elevation_command_handler(data):
         if (data[2] == "FLAGS"):
             print_custom("Homeing : " + str(homeing) + " ,Movedir : " + str(movedir) + " ,HWmovedir : " + str(hardware_movedir) + " ,Stop : " + str(stop) + " ,HW_stop : " + str(HW_stop))
         if (data[2] == "PINS"):
-            foo = []
+            foo = ["","","",""] # for some reason dynamic allocation did not work, so this is how it goes down
             foo [0] = "LOAD1 : " + str(LOAD1_pin.value()) +  " ,LOAD2 : " + str(LOAD2_pin.value()) + " ,ENC_A : " + str(ENC_A.value()) + " ,ENC_B : " + str(ENC_B.value())
             foo [1] = "Homing_pin : " + str(Homing_pin.value())  + " ,Limit_pin : " + str(Limit_pin.value())
             foo [2] = "RF1_pin " + str(RF1_pin.value()) + " ,RF2_pin " + str(RF2_pin.value())+ " ,RF3_pin " + str(RF3_pin.value())+ " ,RF4_pin " + str(RF4_pin.value())
             foo [3] = "Hbridge1 : " + str(H_bridge_1.value())  +  "Hbridge2 : " + str(H_bridge_2.value())
             print_custom(foo)
         if (data[2] ==  "ALL"):
+            foo = ["","","","","","","","",""] # for some reason dynamic allocation did not work, so this is how it goes down
             foo [0] = "=====variables====="
             foo [1] = "Current position = " + str(encoder_value)
             foo [2] = "Target position = " + str(setpoint_value)
