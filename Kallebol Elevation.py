@@ -31,6 +31,7 @@ H_bridge_2.value(0)
 poll_obj = select.poll()
 poll_obj.register(sys.stdin, select.POLLIN)
 
+LED_blink_counter = 0
 
 #Global values
 stop = 0 # a pseudo E-stop
@@ -323,6 +324,14 @@ print_custom ("booted the MCU")
 while True:
     update_stops()
     poll_results = poll_obj.poll(10)
+    
+    LED_blink_counter = LED_blink_counter + 1
+    if LED_blink_counter = 10:
+        PCB3_LED.value(1)
+    if LED_blink_counter > 20:
+        PCB3_LED.value(0)
+        LED_blink_counter = 0
+    
     if poll_results:
         data = sys.stdin.readline().strip()
         if data:
