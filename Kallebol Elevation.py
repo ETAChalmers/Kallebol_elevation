@@ -326,7 +326,7 @@ while True:
     poll_results = poll_obj.poll(10)
     
     LED_blink_counter = LED_blink_counter + 1
-    if LED_blink_counter = 10:
+    if LED_blink_counter == 10:
         PCB3_LED.value(1)
     if LED_blink_counter > 20:
         PCB3_LED.value(0)
