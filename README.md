@@ -1,4 +1,6 @@
-# Kallebol_elevation
+# OLD deprecated Kallebol_elevation
+This project has been abandoned and is not in use
+
 Microcontroller and code for controlling elevation of kallebolen.
 
 The microcontroller communicates via USB.
